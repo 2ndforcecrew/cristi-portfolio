@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 1000">
+  <rect width="800" height="1000" fill="#F4ECDC"/>
+  <g transform="rotate(16 400 500)">
+    <rect x="-300" y="420" width="1400" height="250" fill="#E45E28"/>
+  </g>
+  <circle cx="612" cy="225" r="180" fill="#161311"/>
+  <path d="M170 700 C220 560 300 520 360 440 C430 350 420 250 520 190 L562 238 C482 288 472 378 412 458 C342 548 282 600 262 700 Z" fill="#161311"/>
+  <text x="28" y="950" font-family="Helvetica, Arial, sans-serif" font-weight="900" font-size="380" letter-spacing="-8" fill="#E45E28">01</text>
+  <text x="40" y="66" font-family="Helvetica, Arial, sans-serif" font-size="25" letter-spacing="12" fill="#161311">EDITORIAL — N°01</text>
+  <text x="560" y="950" font-family="Helvetica, Arial, sans-serif" font-size="30" letter-spacing="10" fill="#161311">MUSE</text>
+</svg>

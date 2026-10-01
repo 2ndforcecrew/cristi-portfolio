@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="cristi —— 时装摄影师与平面设计师个人网站。浏览时尚摄影、品牌视觉与平面设计作品集，了解拍摄与设计服务并预约合作。">
+  <meta name="keywords" content="cristi,时装摄影,平面设计,时尚摄影,品牌视觉,作品集">
+  <meta name="author" content="cristi">
+  <meta name="theme-color" content="#0b0b0f">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="cristi | 时装摄影 × 平面设计">
+  <meta property="og:description" content="镜头与纸张之间 —— cristi 的时装摄影与平面设计作品集。">
+  <meta property="og:image" content="assets/img/photo-01.svg">
+  <title>cristi | 时装摄影 × 平面设计</title>
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/layout.css">
+  <link rel="stylesheet" href="css/motion.css">
+</head>
+<body>
+
+  <!-- 顶部滚动进度条 -->
+  <div class="progress" data-js="progress" aria-hidden="true">
+    <span class="progress-bar"></span>
+  </div>
+
+  <!-- 自定义光标 -->
+  <div class="cursor cursor-dot" data-js="cursor-dot" aria-hidden="true"><span class="cursor-inner"></span></div>
+  <div class="cursor cursor-ring" data-js="cursor-ring" aria-hidden="true"><span class="cursor-inner"></span></div>
+
+  <!-- 导航 -->
+  <header class="nav" data-js="nav">
+    <a class="nav-logo" href="#top" data-js="nav-logo">cristi<span class="nav-logo-mark" aria-hidden="true"></span></a>
+    <nav class="nav-links" data-js="nav-links" aria-label="主导航">
+      <a class="nav-link" href="#works">作品</a>
+      <a class="nav-link" href="#about">关于</a>
+      <a class="nav-link" href="#services">服务</a>
+      <a class="nav-link" href="#contact">联系</a>
+    </nav>
+    <button class="nav-burger" type="button" data-js="menu-btn" aria-label="打开菜单" aria-expanded="false">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+  </header>
+
+  <main>
+
+    <!-- Hero -->
+    <section id="top" class="hero reveal" data-js="hero">
+      <div class="hero-shapes" data-js="hero-shapes" aria-hidden="true">
+        <span class="float float--1" style="--d:0s"></span>
+        <span class="float float--3" style="--d:-6s"></span>
+        <span class="float float--2" style="--d:-12s"></span>
+        <span class="float float--4" style="--d:-18s"></span>
+        <span class="float float--6" style="--d:-9s"></span>
+      </div>
+      <p class="eyebrow reveal">CRISTI — FASHION PHOTOGRAPHY &amp; GRAPHIC DESIGN</p>
+      <h1 class="hero-title" data-js="hero-title">
+        <span class="char" style="--d:.05s">镜</span><span class="char" style="--d:.12s">头</span><span class="char" style="--d:.19s">与</span><span class="char" style="--d:.26s">纸</span><span class="char" style="--d:.33s">张</span><span class="char" style="--d:.40s">之</span><span class="char" style="--d:.47s">间</span>
+      </h1>
+      <p class="hero-sub reveal">时装摄影 × 平面设计 —— 用镜头捕捉情绪，用纸张构建品牌。</p>
+      <div class="hero-actions reveal">
+        <a class="btn" href="#works">浏览作品</a>
+        <a class="btn btn--ghost" href="#contact">联系合作</a>
+      </div>
+      <a class="hero-scroll" href="#works" data-js="scroll-hint" aria-label="向下滚动到作品">
+        <span class="hero-scroll-arrow"></span>
+      </a>
+    </section>
+
+    <!-- 跑马灯分隔带：hero 与 works 之间 -->
+    <div class="marquee" aria-hidden="true">
+      <div class="marquee-track">
+        <span>FASHION PHOTOGRAPHY · GRAPHIC DESIGN · 时装摄影 · 平面设计 ·&nbsp;</span>
+        <span>FASHION PHOTOGRAPHY · GRAPHIC DESIGN · 时装摄影 · 平面设计 ·&nbsp;</span>
+      </div>
+    </div>
+
+    <!-- 作品 -->
+    <section id="works" class="works reveal" data-js="works">
+      <h2 class="section-title reveal">作品 <span class="section-title-en">WORKS</span></h2>
+      <p class="section-desc reveal">点击分类切换浏览 —— 时尚大片与品牌视觉，同一套美学语言。</p>
+      <div class="tabs reveal" data-js="tabs" role="tablist" aria-label="作品分类">
+        <button class="tab is-active" type="button" data-js="tab" data-tab="all" role="tab" aria-selected="true">全部</button>
+        <button class="tab" type="button" data-js="tab" data-tab="photo" role="tab" aria-selected="false">时装摄影</button>
+        <button class="tab" type="button" data-js="tab" data-tab="design" role="tab" aria-selected="false">平面设计</button>
+      </div>
+      <div class="works-grid" data-js="works-grid"></div>
+    </section>
+
+    <!-- 关于 -->
+    <section id="about" class="about reveal" data-js="about">
+      <h2 class="section-title reveal">关于 <span class="section-title-en">ABOUT</span></h2>
+      <div class="about-copy reveal">
+        <p class="lead">我是 cristi，一名时装摄影师，也是平面设计师。</p>
+        <p>我的工作在两种介质之间来回穿梭：拍摄时我在追逐光影与姿态最真实的一瞬间；设计时我在纸上重构那种情绪，把它变成品牌可以长期使用的视觉语言。镜头负责捕捉，纸张负责沉淀 —— 两者共用同一套审美。</p>
+        <p>过去几年里，我为独立服装品牌、新锐设计师和时尚媒体拍摄 lookbook 与大片，也为他们做品牌视觉、画册与海报。拍摄与设计由同一个人完成，意味着从快门到成品的每一个环节都在同一种美学下被严格把控。</p>
+      </div>
+      <dl class="about-stats reveal">
+        <div class="stat">
+          <dt class="stat-num" data-js="stat-num" data-count="60">0</dt>
+          <dd class="stat-label">拍摄项目+</dd>
+        </div>
+        <div class="stat">
+          <dt class="stat-num" data-js="stat-num" data-count="40">0</dt>
+          <dd class="stat-label">设计项目+</dd>
+        </div>
+        <div class="stat">
+          <dt class="stat-num" data-js="stat-num" data-count="8">0</dt>
+          <dd class="stat-label">合作品牌</dd>
+        </div>
+      </dl>
+    </section>
+
+    <!-- 服务 -->
+    <section id="services" class="services reveal" data-js="services">
+      <h2 class="section-title reveal">服务 <span class="section-title-en">SERVICES</span></h2>
+      <p class="section-desc reveal">从拍摄到设计，一站式视觉交付。</p>
+      <div class="services-grid reveal">
+        <article class="service-card">
+          <p class="service-num">01</p>
+          <h3>时装摄影</h3>
+          <p>Lookbook、时尚大片、品牌 campaign 拍摄。从概念、造型到成片的全流程把控。</p>
+        </article>
+        <article class="service-card">
+          <p class="service-num">02</p>
+          <h3>品牌视觉</h3>
+          <p>Logo、视觉识别系统、品牌手册。让品牌的每一次露面都长得像自己。</p>
+        </article>
+        <article class="service-card">
+          <p class="service-num">03</p>
+          <h3>平面与画册</h3>
+          <p>海报、画册、宣传物料设计。把拍摄的情绪延伸到每一张纸上。</p>
+        </article>
+      </div>
+    </section>
+
+    <!-- 联系 -->
+    <section id="contact" class="contact reveal" data-js="contact">
+      <h2 class="section-title reveal">联系 <span class="section-title-en">CONTACT</span></h2>
+      <p class="section-desc reveal">有拍摄或设计需求？发一封邮件，聊聊你的想法。</p>
+      <a class="contact-mail reveal" href="mailto:hello@cristi.studio" data-js="contact-mail">hello@cristi.studio</a>
+      <ul class="contact-socials reveal">
+        <li><a class="social-link" href="#" data-js="social-link">微信</a></li>
+        <li><a class="social-link" href="#" data-js="social-link">小红书</a></li>
+        <li><a class="social-link" href="#" data-js="social-link">Instagram</a></li>
+      </ul>
+    </section>
+
+  </main>
+
+  <!-- 页脚 -->
+  <footer class="footer">
+    <p class="footer-copy">© <span data-js="year"></span> cristi. 保留所有权利。</p>
+    <p class="footer-tag">BETWEEN LENS &amp; PAPER</p>
+  </footer>
+
+  <script src="js/data.js"></script>
+  <script src="js/effects.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>

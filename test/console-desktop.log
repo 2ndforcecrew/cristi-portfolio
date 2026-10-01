@@ -1,0 +1,45 @@
+[7446:7466:1001/112111.082457:ERROR:dbus/bus.cc:405] Failed to connect to the bus: Failed to connect to socket /run/dbus/system_bus_socket: No such file or directory
+[7446:7466:1001/112111.084285:ERROR:dbus/bus.cc:405] Failed to connect to the bus: Could not parse server address: Unknown address type (examples of valid types are "tcp" and on UNIX "unix")
+[7446:7446:1001/112111.149293:WARNING:net/proxy_resolution/proxy_config_service_linux.cc:96] Proxy authentication parameters ignored, see bug 16709
+[7446:7466:1001/112111.187320:ERROR:dbus/bus.cc:405] Failed to connect to the bus: Failed to connect to socket /run/dbus/system_bus_socket: No such file or directory
+[7446:7466:1001/112111.187424:ERROR:dbus/bus.cc:405] Failed to connect to the bus: Failed to connect to socket /run/dbus/system_bus_socket: No such file or directory
+[7446:7466:1001/112111.187450:ERROR:dbus/bus.cc:405] Failed to connect to the bus: Could not parse server address: Unknown address type (examples of valid types are "tcp" and on UNIX "unix")
+[7482:7482:1001/112111.396014:WARNING:media/gpu/vaapi/vaapi_wrapper.cc:1660] drmGetDevices2() has not found any devices
+[7482:7482:1001/112111.428243:WARNING:sandbox/policy/linux/sandbox_linux.cc:405] InitializeSandbox() called with multiple threads in process gpu-process.
+[7446:7466:1001/112114.289228:ERROR:dbus/bus.cc:405] Failed to connect to the bus: Could not parse server address: Unknown address type (examples of valid types are "tcp" and on UNIX "unix")
+[7446:7446:1001/112114.475307:WARNING:chrome/browser/signin/account_consistency_mode_manager.cc:74] Desktop Identity Consistency cannot be enabled as no OAuth client ID and client secret have been configured.
+[7446:7466:1001/112114.487248:ERROR:dbus/bus.cc:405] Failed to connect to the bus: Could not parse server address: Unknown address type (examples of valid types are "tcp" and on UNIX "unix")
+[7446:7446:1001/112114.492317:WARNING:net/proxy_resolution/proxy_config_service_linux.cc:96] Proxy authentication parameters ignored, see bug 16709
+[7446:7446:1001/112114.510033:WARNING:net/proxy_resolution/proxy_config_service_linux.cc:96] Proxy authentication parameters ignored, see bug 16709
+[7446:7446:1001/112114.561455:WARNING:net/proxy_resolution/proxy_config_service_linux.cc:96] Proxy authentication parameters ignored, see bug 16709
+[7529:7529:1001/112114.718054:WARNING:content/child/runtime_features.cc:563] SharedStorage cannot be enabled in this configuration. Use --enable-features=SharedStorageAPI in addition.
+[7529:7529:1001/112114.719198:WARNING:content/child/runtime_features.cc:573] AttributionReporting cannot be enabled in this configuration. Use --enable-features=ConversionMeasurement in addition.
+[7446:7446:1001/112114.848908:ERROR:dbus/object_proxy.cc:572] Failed to call method: org.freedesktop.DBus.NameHasOwner: object_path= /org/freedesktop/DBus: unknown error type: 
+[7446:7446:1001/112114.849100:WARNING:device/bluetooth/dbus/bluez_dbus_manager.cc:209] Floss manager service not available, cannot set Floss enable/disable.
+[7446:7446:1001/112114.849155:ERROR:dbus/object_proxy.cc:572] Failed to call method: org.freedesktop.DBus.NameHasOwner: object_path= /org/freedesktop/DBus: unknown error type: 
+[7446:7466:1001/112114.849580:ERROR:dbus/bus.cc:405] Failed to connect to the bus: Could not parse server address: Unknown address type (examples of valid types are "tcp" and on UNIX "unix")
+[7446:7466:1001/112114.849612:ERROR:dbus/bus.cc:405] Failed to connect to the bus: Could not parse server address: Unknown address type (examples of valid types are "tcp" and on UNIX "unix")
+[7446:7446:1001/112114.854171:ERROR:dbus/object_proxy.cc:572] Failed to call method: org.freedesktop.DBus.NameHasOwner: object_path= /org/freedesktop/DBus: unknown error type: 
+[7446:7446:1001/112114.864200:ERROR:dbus/object_proxy.cc:572] Failed to call method: org.freedesktop.DBus.NameHasOwner: object_path= /org/freedesktop/DBus: unknown error type: 
+[7540:7540:1001/112114.915639:WARNING:content/child/runtime_features.cc:563] SharedStorage cannot be enabled in this configuration. Use --enable-features=SharedStorageAPI in addition.
+[7540:7540:1001/112114.916816:WARNING:content/child/runtime_features.cc:573] AttributionReporting cannot be enabled in this configuration. Use --enable-features=ConversionMeasurement in addition.
+[7542:7542:1001/112114.948804:WARNING:content/child/runtime_features.cc:563] SharedStorage cannot be enabled in this configuration. Use --enable-features=SharedStorageAPI in addition.
+[7542:7542:1001/112114.948996:WARNING:content/child/runtime_features.cc:573] AttributionReporting cannot be enabled in this configuration. Use --enable-features=ConversionMeasurement in addition.
+[7446:7446:1001/112115.116808:ERROR:dbus/object_proxy.cc:572] Failed to call method: org.freedesktop.DBus.NameHasOwner: object_path= /org/freedesktop/DBus: unknown error type: 
+[7446:7466:1001/112115.123738:ERROR:dbus/bus.cc:405] Failed to connect to the bus: Failed to connect to socket /run/dbus/system_bus_socket: No such file or directory
+[7446:7466:1001/112115.123820:ERROR:dbus/bus.cc:405] Failed to connect to the bus: Failed to connect to socket /run/dbus/system_bus_socket: No such file or directory
+[7446:7446:1001/112115.126490:ERROR:dbus/object_proxy.cc:572] Failed to call method: org.freedesktop.DBus.NameHasOwner: object_path= /org/freedesktop/DBus: unknown error type: 
+[7446:7466:1001/112115.139374:ERROR:dbus/bus.cc:405] Failed to connect to the bus: Could not parse server address: Unknown address type (examples of valid types are "tcp" and on UNIX "unix")
+[7562:7562:1001/112115.198035:WARNING:content/child/runtime_features.cc:563] SharedStorage cannot be enabled in this configuration. Use --enable-features=SharedStorageAPI in addition.
+[7562:7562:1001/112115.198301:WARNING:content/child/runtime_features.cc:573] AttributionReporting cannot be enabled in this configuration. Use --enable-features=ConversionMeasurement in addition.
+[7446:7446:1001/112115.302287:WARNING:dbus/property.cc:94] Failed to connect to PropertiesChangedsignal.
+[7446:7446:1001/112115.302371:ERROR:dbus/object_proxy.cc:572] Failed to call method: org.freedesktop.DBus.Properties.GetAll: object_path= /org/freedesktop/UPower/devices/DisplayDevice: unknown error type: 
+[7446:7446:1001/112115.302388:WARNING:dbus/property.cc:174] GetAll request failed for: org.freedesktop.UPower.Device
+[7446:7446:1001/112115.312176:ERROR:dbus/object_proxy.cc:572] Failed to call method: org.freedesktop.DBus.NameHasOwner: object_path= /org/freedesktop/DBus: unknown error type: 
+[7446:7466:1001/112115.315361:ERROR:dbus/bus.cc:405] Failed to connect to the bus: Could not parse server address: Unknown address type (examples of valid types are "tcp" and on UNIX "unix")
+[7446:7446:1001/112115.359432:ERROR:dbus/object_proxy.cc:572] Failed to call method: org.freedesktop.DBus.NameHasOwner: object_path= /org/freedesktop/DBus: unknown error type: 
+[7446:7466:1001/112115.363013:ERROR:dbus/bus.cc:405] Failed to connect to the bus: Could not parse server address: Unknown address type (examples of valid types are "tcp" and on UNIX "unix")
+[7446:7446:1001/112115.370856:ERROR:dbus/object_proxy.cc:572] Failed to call method: org.freedesktop.DBus.NameHasOwner: object_path= /org/freedesktop/DBus: unknown error type: 
+[7446:7446:1001/112115.370902:WARNING:ui/base/idle/idle_linux.cc:111] None of the known D-Bus ScreenSaver services could be used.
+[7580:7580:1001/112115.858504:WARNING:content/child/runtime_features.cc:563] SharedStorage cannot be enabled in this configuration. Use --enable-features=SharedStorageAPI in addition.
+[7580:7580:1001/112115.859806:WARNING:content/child/runtime_features.cc:573] AttributionReporting cannot be enabled in this configuration. Use --enable-features=ConversionMeasurement in addition.

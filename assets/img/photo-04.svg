@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 1000">
+  <rect width="800" height="1000" fill="#F4ECDC"/>
+  <rect x="400" width="400" height="1000" fill="#161311"/>
+  <circle cx="400" cy="470" r="235" fill="#E45E28"/>
+  <path d="M300 760 C310 640 270 590 305 505 C340 425 305 380 350 320 L378 342 C340 400 372 445 340 520 C308 595 348 645 342 760 Z" fill="#161311"/>
+  <path d="M500 760 C490 640 530 590 495 505 C460 425 495 380 450 320 L422 342 C460 400 428 445 460 520 C492 595 452 645 458 760 Z" fill="#F4ECDC"/>
+  <text x="400" y="980" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-weight="900" font-size="380" letter-spacing="-8" fill="#E45E28">04</text>
+  <text x="60" y="66" font-family="Helvetica, Arial, sans-serif" font-size="24" letter-spacing="10" fill="#161311">DUAL —</text>
+  <text x="470" y="66" font-family="Helvetica, Arial, sans-serif" font-size="24" letter-spacing="10" fill="#F4ECDC">STUDY N°04</text>
+</svg>

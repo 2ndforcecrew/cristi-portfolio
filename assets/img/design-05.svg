@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 1000">
+  <rect width="800" height="1000" fill="#0E1626"/>
+  <text x="400" y="470" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-weight="900" font-size="420" letter-spacing="-8" fill="#F4F4F4">05</text>
+  <g transform="rotate(-20 400 660)">
+    <rect x="-300" y="610" width="1400" height="110" fill="#E8FF2E"/>
+  </g>
+  <text x="400" y="800" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-size="24" letter-spacing="12" fill="#E8FF2E">ENCODE / DECODE</text>
+  <g fill="#F4F4F4">
+    <rect x="60" y="840" width="14" height="110"/><rect x="84" y="840" width="6" height="110"/>
+    <rect x="100" y="840" width="20" height="110"/><rect x="130" y="840" width="8" height="110"/>
+    <rect x="148" y="840" width="14" height="110"/><rect x="172" y="840" width="6" height="110"/>
+    <rect x="188" y="840" width="24" height="110"/><rect x="222" y="840" width="10" height="110"/>
+    <rect x="242" y="840" width="6" height="110"/><rect x="258" y="840" width="16" height="110"/>
+    <rect x="284" y="840" width="8" height="110"/><rect x="302" y="840" width="20" height="110"/>
+    <rect x="332" y="840" width="6" height="110"/><rect x="348" y="840" width="12" height="110"/>
+    <rect x="370" y="840" width="24" height="110"/><rect x="404" y="840" width="8" height="110"/>
+    <rect x="422" y="840" width="14" height="110"/><rect x="446" y="840" width="6" height="110"/>
+    <rect x="462" y="840" width="20" height="110"/><rect x="492" y="840" width="10" height="110"/>
+    <rect x="512" y="840" width="16" height="110"/><rect x="538" y="840" width="6" height="110"/>
+    <rect x="554" y="840" width="22" height="110"/><rect x="586" y="840" width="8" height="110"/>
+    <rect x="604" y="840" width="14" height="110"/><rect x="628" y="840" width="6" height="110"/>
+    <rect x="644" y="840" width="18" height="110"/><rect x="672" y="840" width="10" height="110"/>
+    <rect x="692" y="840" width="24" height="110"/><rect x="726" y="840" width="8" height="110"/>
+  </g>
+  <text x="40" y="66" font-family="Helvetica, Arial, sans-serif" font-size="25" letter-spacing="12" fill="#F4F4F4">DATA — 05</text>
+</svg>

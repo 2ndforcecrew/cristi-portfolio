@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 1000">
+  <rect width="800" height="1000" fill="#EE7B2E"/>
+  <path d="M170 1000 L170 430 A230 230 0 0 1 630 430 L630 1000 Z" fill="#F4ECDC"/>
+  <path d="M392 960 C384 810 414 720 396 600 C382 510 416 445 398 360 L428 358 C448 448 412 515 428 605 C444 705 416 815 426 960 Z" fill="#161311"/>
+  <circle cx="120" cy="150" r="60" fill="#BE3A1C"/>
+  <text x="24" y="950" font-family="Helvetica, Arial, sans-serif" font-weight="900" font-size="380" letter-spacing="-8" fill="#BE3A1C">03</text>
+  <text x="470" y="66" font-family="Helvetica, Arial, sans-serif" font-size="25" letter-spacing="10" fill="#F4ECDC">VELVET — DOOR</text>
+</svg>

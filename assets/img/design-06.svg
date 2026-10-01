@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 1000">
+  <rect width="800" height="1000" fill="#2B5CFF"/>
+  <rect x="400" width="400" height="1000" fill="#E8FF2E"/>
+  <g fill="none" stroke="#0C0C0E" stroke-width="12">
+    <path d="M-20 300 C150 220 250 380 420 300 C590 220 690 380 820 300"/>
+    <path d="M-20 430 C150 350 250 510 420 430 C590 350 690 510 820 430"/>
+    <path d="M-20 560 C150 480 250 640 420 560 C590 480 690 640 820 560"/>
+  </g>
+  <text x="400" y="900" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-weight="900" font-size="380" letter-spacing="-8" fill="#0C0C0E">06</text>
+  <text x="40" y="66" font-family="Helvetica, Arial, sans-serif" font-size="25" letter-spacing="12" fill="#0C0C0E">TYPE — FORM</text>
+</svg>

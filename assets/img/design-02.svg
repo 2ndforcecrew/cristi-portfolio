@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 1000">
+  <rect width="800" height="1000" fill="#2B5CFF"/>
+  <g transform="rotate(-16 400 500)">
+    <rect x="-300" y="120" width="1400" height="90" fill="#0C0C0E"/>
+    <rect x="-300" y="790" width="1400" height="90" fill="#0C0C0E"/>
+  </g>
+  <rect x="0" y="880" width="800" height="120" fill="#E8FF2E"/>
+  <text x="400" y="660" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-weight="900" font-size="560" fill="#0C0C0E">Aa</text>
+  <text x="40" y="66" font-family="Helvetica, Arial, sans-serif" font-size="25" letter-spacing="10" fill="#0C0C0E">TYPE STUDY — 02</text>
+  <text x="400" y="962" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-size="26" letter-spacing="12" fill="#0C0C0E">FORM / COUNTERFORM</text>
+</svg>
