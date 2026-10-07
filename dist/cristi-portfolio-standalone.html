@@ -1,0 +1,1838 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="cristi —— 时装摄影师与平面设计师个人网站。浏览时尚摄影、品牌视觉与平面设计作品集，了解拍摄与设计服务并预约合作。">
+  <meta name="keywords" content="cristi,时装摄影,平面设计,时尚摄影,品牌视觉,作品集">
+  <meta name="author" content="cristi">
+  <meta name="theme-color" content="#0b0b0f">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="cristi | 时装摄影 × 平面设计">
+  <meta property="og:description" content="镜头与纸张之间 —— cristi 的时装摄影与平面设计作品集。">
+    <title>cristi | 时装摄影 × 平面设计</title>
+  <style>
+/* ============================================================
+   base.css — 色板 token / reset / 字阶与间距工具类
+   扁平化风格：大色块、硬阴影、粗边框、强对比，禁用模糊渐隐
+   ============================================================ */
+
+:root {
+  /* ---- 色板（规划约定，勿改） ---- */
+  --ink: #141414;      /* 墨黑：文字 / 边框 / 硬阴影 */
+  --paper: #F7F4EC;    /* 米纸：页面底色 */
+  --accent: #FF4D00;   /* 亮橙：主强调 */
+  --blue: #1B2CC1;     /* 钴蓝：次强调 */
+
+  --white: #FFFFFF;
+
+  /* ---- 扁平装饰 token ---- */
+  --border: 3px solid var(--ink);
+  --border-thin: 2px solid var(--ink);
+  --shadow-sm: 4px 4px 0 var(--ink);    /* 硬阴影：offset solid，无模糊 */
+  --shadow-md: 6px 6px 0 var(--ink);
+  --shadow-lg: 10px 10px 0 var(--ink);
+  --radius: 0;                          /* 扁平 = 直角 */
+
+  /* ---- 字体 ---- */
+  --font-sans: system-ui, -apple-system, "Segoe UI",
+    "PingFang TC", "Hiragino Sans GB", "Microsoft JhengHei",
+    "Noto Sans TC", sans-serif;
+
+  /* ---- 字阶（流体） ---- */
+  --fs-display: clamp(3rem, 11vw, 9.5rem);
+  --fs-h1: clamp(2.25rem, 5.5vw, 4rem);
+  --fs-h2: clamp(1.5rem, 3.5vw, 2.25rem);
+  --fs-lead: clamp(1.05rem, 1.8vw, 1.35rem);
+  --fs-body: 1rem;
+  --fs-small: .85rem;
+
+  /* ---- 间距 ---- */
+  --space-section: clamp(4rem, 10vw, 8rem);
+  --space-gap: clamp(1.25rem, 3vw, 2rem);
+
+  /* ---- 动效 ---- */
+  --ease-out: cubic-bezier(.2, .9, .25, 1);
+  --ease-spring: cubic-bezier(.34, 1.56, .64, 1);
+  --duration: .45s;
+}
+
+/* ---------------- reset ---------------- */
+*, *::before, *::after { box-sizing: border-box; }
+
+* { margin: 0; }
+
+html {
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  font-family: var(--font-sans);
+  font-size: var(--fs-body);
+  line-height: 1.6;
+  color: var(--ink);
+  background: var(--paper);
+  overflow-x: clip;                 /* 杜绝横向溢出 */
+  -webkit-font-smoothing: antialiased;
+}
+
+img, svg, video { display: block; max-width: 100%; }
+
+a { color: inherit; text-decoration-thickness: 2px; }
+
+button {
+  font: inherit;
+  color: inherit;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+ul, ol { padding: 0; list-style: none; }
+
+h1, h2, h3, h4 { line-height: 1.05; font-weight: 900; text-wrap: balance; }
+p { text-wrap: pretty; }
+
+::selection { background: var(--accent); color: var(--paper); }
+
+:focus-visible {
+  outline: 3px solid var(--accent);
+  outline-offset: 3px;
+}
+
+/* ---------------- 布局工具 ---------------- */
+.container {
+  width: min(1200px, 100% - 2.5rem);
+  margin-inline: auto;
+}
+
+.section { padding-block: var(--space-section); }
+
+/* ---------------- 字阶工具 ---------------- */
+.display-1 {
+  font-size: var(--fs-display);
+  font-weight: 900;
+  line-height: .95;
+  letter-spacing: -.02em;
+  text-transform: uppercase;
+}
+
+.display-2 {
+  font-size: var(--fs-h1);
+  font-weight: 900;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.lead { font-size: var(--fs-lead); line-height: 1.55; }
+
+.eyebrow {
+  display: inline-block;
+  font-size: var(--fs-small);
+  font-weight: 800;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  border: var(--border-thin);
+  background: var(--white);
+  box-shadow: var(--shadow-sm);
+  padding: .45rem .9rem;
+  margin-bottom: 1.5rem;
+}
+
+.text-accent { color: var(--accent); }
+.text-blue { color: var(--blue); }
+.text-paper { color: var(--paper); }
+
+.bg-ink { background: var(--ink); color: var(--paper); }
+.bg-accent { background: var(--accent); color: var(--paper); }
+.bg-blue { background: var(--blue); color: var(--paper); }
+
+/* 荧光笔式高亮：扁平风的文字强调 */
+.hl {
+  background: var(--accent);
+  color: var(--paper);
+  padding: 0 .25em;
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
+}
+
+/* 描边空心字：扁平风标题装饰 */
+.text-outline {
+  color: transparent;
+  -webkit-text-stroke: 3px var(--ink);
+}
+@media (max-width: 520px) {
+  .text-outline { -webkit-text-stroke-width: 2px; }
+}
+
+.visually-hidden {
+  position: absolute !important;
+  width: 1px; height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+/* ---------------- 无 JS 降级：内容默认可见 ----------------
+   有 JS 时 <html> 会带 .js，motion.css 里的初始隐藏态才生效 */
+html:not(.js) .reveal,
+html:not(.js) .hero-title .char,
+html:not(.js) .tab,
+html:not(.js) .tabs .tab,
+html:not(.js) .hero-sub,
+html:not(.js) .hero-actions,
+html:not(.js) .hero-meta {
+  opacity: 1 !important;
+  transform: none !important;
+  translate: none !important;
+  scale: none !important;
+}
+html:not(.js) .skill-fill { transform: scaleX(var(--w, 1)) !important; }
+html:not(.js) .work-card-overlay { position: static; transform: none; }
+
+</style>
+  <style>
+/* ============================================================
+   layout.css — 各 section 布局 / 作品网格 / 断点 1024 / 768 / 520
+   结构类：.nav .hero .works .about .services .contact .footer
+   组件类：.btn .tab .work-card .skill .service-card
+   状态类：.is-active .is-open
+   （动效类 .in / .is-hover / keyframes 全部在 motion.css）
+   ============================================================ */
+
+/* ================= 导航 ================= */
+.nav {
+  position: fixed;
+  inset: 0 0 auto 0;
+  z-index: 50;
+  background: var(--paper);
+  border-bottom: var(--border);
+}
+
+.nav-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 72px;
+}
+
+.nav-logo {
+  display: flex;
+  align-items: center;
+  gap: .6rem;
+  font-weight: 900;
+  font-size: 1.35rem;
+  letter-spacing: -.01em;
+  text-transform: uppercase;
+  text-decoration: none;
+}
+.nav-logo-mark {
+  width: 22px; height: 22px;
+  background: var(--accent);
+  border: var(--border-thin);
+  box-shadow: 3px 3px 0 var(--ink);
+}
+
+.nav-links { display: flex; align-items: center; gap: 2rem; }
+
+.nav-link {
+  font-weight: 800;
+  font-size: .9rem;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  text-decoration: none;
+  padding: .35rem .1rem;
+  border-bottom: 3px solid transparent;
+}
+.nav-link:hover { border-bottom-color: var(--accent); }
+.nav-link.is-active { border-bottom-color: var(--accent); }
+
+.nav-cta { margin-left: .5rem; }
+
+/* 汉堡按钮：桌面隐藏 */
+.nav-burger {
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  gap: 6px;
+  width: 48px; height: 48px;
+  border: var(--border);
+  background: var(--white);
+  box-shadow: var(--shadow-sm);
+  padding: 0 10px;
+}
+.nav-burger span {
+  display: block;
+  height: 3px;
+  background: var(--ink);
+  transition: transform .3s var(--ease-out), opacity .3s;
+}
+
+/* ================= Hero ================= */
+.hero {
+  position: relative;
+  min-height: 100svh;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  padding-top: 72px;                 /* 避开固定导航 */
+  border-bottom: var(--border);
+  background: var(--paper);
+}
+
+.hero-inner { position: relative; z-index: 2; }
+
+.hero-title {
+  margin: 1.25rem 0 1.5rem;
+  max-width: 100%;
+  overflow-wrap: break-word;        /* 大字不断行溢出 */
+}
+.hero-title .row { display: block; }
+
+.hero-sub { max-width: 34rem; }
+
+.hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-top: 2.25rem;
+}
+
+.hero-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem 2.5rem;
+  margin-top: 3rem;
+  padding-top: 1.5rem;
+  border-top: var(--border-thin);
+  font-size: var(--fs-small);
+  font-weight: 700;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+}
+.hero-meta b { color: var(--accent); }
+
+/* 漂移几何图形的定位（动画见 motion.css） */
+.float { position: absolute; z-index: 1; pointer-events: none; }
+.float--1 { top: 16%; right: 8%;  width: 120px; height: 120px; }
+.float--2 { top: 64%; right: 18%; width: 72px;  height: 72px; }
+.float--3 { top: 30%; left: 4%;   width: 56px;  height: 56px; }
+.float--4 { top: 74%; left: 10%;  width: 96px;  height: 96px; }
+.float--5 { top: 12%; left: 38%;  width: 40px;  height: 40px; }
+.float--6 { top: 52%; right: 4%;  width: 88px;  height: 88px; }
+
+/* ================= 按钮 ================= */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: .6rem;
+  padding: .95rem 1.9rem;
+  font-weight: 900;
+  font-size: 1rem;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+  text-decoration: none;
+  color: var(--paper);
+  background: var(--accent);
+  border: var(--border);
+  box-shadow: var(--shadow-md);
+  transition: transform .18s var(--ease-out), box-shadow .18s var(--ease-out);
+}
+.btn:hover { transform: translate(-2px, -2px); box-shadow: 8px 8px 0 var(--ink); }
+.btn:active { transform: translate(4px, 4px); box-shadow: 2px 2px 0 var(--ink); }
+
+.btn--dark  { background: var(--ink); color: var(--paper); }
+.btn--blue  { background: var(--blue); }
+.btn--ghost { background: var(--white); color: var(--ink); }
+.btn--lg    { padding: 1.2rem 2.6rem; font-size: 1.15rem; }
+
+/* ================= 通用 section 头 ================= */
+.section-head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1.25rem;
+  margin-bottom: 3rem;
+}
+.section-title { margin-top: 1.25rem; }
+.section-desc { max-width: 32rem; margin-top: 1rem; }
+
+/* ================= 作品区 ================= */
+.works { background: var(--paper); }
+
+.tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .8rem;
+  margin-bottom: 2.5rem;
+}
+
+.tab {
+  padding: .65rem 1.3rem;
+  font-weight: 800;
+  font-size: .85rem;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  background: var(--white);
+  border: var(--border);
+  box-shadow: var(--shadow-sm);
+  transition: transform .18s var(--ease-out), box-shadow .18s var(--ease-out),
+              background .18s, color .18s;
+}
+.tab:hover { transform: translate(-2px, -2px); box-shadow: 6px 6px 0 var(--ink); }
+.tab.is-active {
+  background: var(--ink);
+  color: var(--paper);
+  transform: translate(2px, 2px);
+  box-shadow: 2px 2px 0 var(--ink);
+}
+
+.works-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-gap);
+}
+
+.work-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  background: var(--white);
+  border: var(--border);
+  box-shadow: var(--shadow-md);
+  overflow: hidden;
+  transition: transform .25s var(--ease-out), box-shadow .25s var(--ease-out);
+}
+.work-card-media {
+  position: relative;
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+  border-bottom: var(--border);
+  background: var(--blue);
+}
+.work-card-media img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+}
+.work-card-body { padding: 1.25rem 1.25rem 1.4rem; }
+.work-card-title { font-size: 1.25rem; margin-bottom: .5rem; }
+.work-card-tags { display: flex; flex-wrap: wrap; gap: .5rem; }
+.work-card-tags li {
+  font-size: .72rem;
+  font-weight: 800;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  border: var(--border-thin);
+  padding: .25rem .6rem;
+  background: var(--paper);
+}
+.work-card-overlay {
+  position: absolute;
+  left: 0; right: 0; bottom: 0;
+  background: var(--accent);
+  color: var(--paper);
+  border-top: var(--border);
+  padding: 1rem 1.25rem;
+}
+.work-card-overlay strong {
+  display: block;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  font-size: .85rem;
+  margin-bottom: .25rem;
+}
+.work-card-overlay p { font-size: .85rem; line-height: 1.5; }
+
+/* 触屏：遮罩信息直接静态展示，不依赖 hover */
+@media (hover: none) {
+  .work-card-overlay { position: static; }
+}
+
+/* ================= 关于 ================= */
+.about { background: var(--white); border-block: var(--border); }
+
+.about-grid {
+  display: grid;
+  grid-template-columns: 1fr 1.25fr;
+  gap: clamp(2rem, 5vw, 4.5rem);
+  align-items: center;
+}
+
+.about-photo {
+  border: var(--border);
+  box-shadow: var(--shadow-lg);
+  background: var(--blue);
+  aspect-ratio: 4 / 5;
+  transform: rotate(-2deg);
+  overflow: hidden;
+}
+.about-photo img { width: 100%; height: 100%; object-fit: cover; }
+
+.about-copy p + p { margin-top: 1rem; }
+
+.about-facts { margin-top: 2rem; border-top: var(--border); }
+.about-facts li {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: .9rem 0;
+  border-bottom: var(--border-thin);
+  font-weight: 700;
+}
+.about-facts li b { color: var(--accent); }
+
+/* 技能条 */
+.skills { margin-top: 2.5rem; }
+.skill { margin-bottom: 1.3rem; }
+.skill-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: .5rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  font-size: .9rem;
+}
+.skill-head .pct { color: var(--blue); }
+.skill-track {
+  height: 20px;
+  border: var(--border);
+  background: var(--paper);
+  overflow: hidden;
+}
+.skill-fill {
+  height: 100%;
+  background: var(--accent);
+  /* --w 由 JS 设为 0~1 的小数；动画用 scaleX（transform only） */
+  --w: 1;
+}
+.skill:nth-of-type(3n+2) .skill-fill { background: var(--blue); }
+.skill:nth-of-type(3n) .skill-fill { background: var(--ink); }
+
+/* ================= 服务 ================= */
+.services { background: var(--paper); }
+
+.services-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-gap);
+}
+
+.service-card {
+  background: var(--white);
+  border: var(--border);
+  box-shadow: var(--shadow-md);
+  padding: 2rem 1.75rem;
+  transition: transform .22s var(--ease-out), box-shadow .22s var(--ease-out);
+}
+.service-card:hover { transform: translate(-4px, -4px); box-shadow: var(--shadow-lg); }
+.service-card:nth-child(1) { background: var(--accent); color: var(--paper); }
+.service-card:nth-child(2) { background: var(--blue); color: var(--paper); }
+
+.service-num {
+  font-size: 3rem;
+  font-weight: 900;
+  line-height: 1;
+  margin-bottom: 1.25rem;
+  opacity: .9;
+}
+.service-card h3 { font-size: 1.4rem; margin-bottom: .75rem; text-transform: uppercase; }
+.service-card p { font-size: .95rem; }
+.service-card ul { margin-top: 1.1rem; }
+.service-card ul li {
+  padding: .45rem 0;
+  border-top: 2px solid currentColor;
+  font-weight: 700;
+  font-size: .9rem;
+}
+
+/* ================= 联系 ================= */
+.contact {
+  background: var(--ink);
+  color: var(--paper);
+  border-top: var(--border);
+  text-align: center;
+}
+.contact .eyebrow { background: var(--ink); color: var(--paper); border-color: var(--paper); box-shadow: 4px 4px 0 var(--accent); }
+.contact-title { margin: 1.25rem auto 1.5rem; max-width: 16ch; }
+.contact-mail {
+  display: inline-block;
+  font-size: clamp(1.4rem, 4.5vw, 3rem);
+  font-weight: 900;
+  color: var(--accent);
+  text-decoration: none;
+  border-bottom: 4px solid var(--accent);
+  margin-bottom: 2.5rem;
+  overflow-wrap: break-word;
+}
+.contact-mail:hover { color: var(--paper); border-bottom-color: var(--paper); }
+.contact-socials {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-top: 2.5rem;
+}
+
+/* ================= 页脚 ================= */
+.footer {
+  background: var(--ink);
+  color: var(--paper);
+  border-top: 3px solid var(--accent);
+  padding: 2.5rem 0 1.5rem;
+}
+.footer-inner {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1.25rem;
+}
+.footer-brand { font-weight: 900; text-transform: uppercase; font-size: 1.1rem; }
+.footer-brand .nav-logo-mark { display: inline-block; vertical-align: -3px; margin-right: .5rem; }
+.footer-links { display: flex; gap: 1.5rem; flex-wrap: wrap; font-size: .85rem; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; }
+.footer-links a { text-decoration: none; }
+.footer-links a:hover { color: var(--accent); }
+.footer-copy {
+  margin-top: 2rem;
+  padding-top: 1.25rem;
+  border-top: 2px solid rgba(247, 244, 236, .25);
+  font-size: .8rem;
+  opacity: .75;
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: .5rem;
+}
+
+/* ============================================================
+   断点
+   ============================================================ */
+
+/* ≤1024：作品 3→2 列，服务 3→2 列 */
+@media (max-width: 1024px) {
+  .works-grid { grid-template-columns: repeat(2, 1fr); }
+  .services-grid { grid-template-columns: repeat(2, 1fr); }
+  .float--1 { width: 90px; height: 90px; }
+  .float--4 { width: 72px; height: 72px; }
+}
+
+/* ≤768：导航收进汉堡菜单；关于改单列；服务改单列 */
+@media (max-width: 768px) {
+  .nav-burger { display: flex; }
+
+  .nav-links {
+    position: fixed;
+    top: 72px; left: 0; right: 0;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0;
+    background: var(--ink);
+    color: var(--paper);
+    border-bottom: var(--border);
+    padding: 1rem 1.25rem 1.5rem;
+    transform: translateY(-130%);
+    opacity: 0;
+    pointer-events: none;
+    transition: transform .35s var(--ease-out), opacity .3s;
+  }
+  .nav.is-open .nav-links {
+    transform: translateY(0);
+    opacity: 1;
+    pointer-events: auto;
+  }
+  .nav-link {
+    display: block;
+    padding: 1rem .25rem;
+    border-bottom: 2px solid rgba(247, 244, 236, .2);
+    font-size: 1.05rem;
+  }
+  .nav-link:hover, .nav-link.is-active { border-bottom-color: var(--accent); color: var(--accent); }
+  .nav-cta { margin: 1.25rem 0 0; }
+
+  /* 汉堡变 X */
+  .nav.is-open .nav-burger span:nth-child(1) { transform: translateY(9px) rotate(45deg); }
+  .nav.is-open .nav-burger span:nth-child(2) { opacity: 0; }
+  .nav.is-open .nav-burger span:nth-child(3) { transform: translateY(-9px) rotate(-45deg); }
+
+  .about-grid { grid-template-columns: 1fr; }
+  .about-photo { max-width: 420px; }
+
+  .services-grid { grid-template-columns: 1fr; }
+
+  .section-head { margin-bottom: 2.25rem; }
+
+  .hero-meta { gap: .75rem 1.5rem; }
+}
+
+/* ≤520：作品 2→1 列；收紧间距 */
+@media (max-width: 520px) {
+  .works-grid { grid-template-columns: 1fr; }
+
+  .container { width: min(1200px, 100% - 2rem); }
+
+  .hero-actions .btn { flex: 1 1 100%; }
+
+  .float--2, .float--5 { display: none; }   /* 小屏减少装饰 */
+
+  .footer-inner { flex-direction: column; align-items: flex-start; }
+
+  .about-stats { gap: 1rem; }
+  .stat-num { font-size: 1.8rem; }
+}
+
+/* ============================================================
+   增补：HTML 类名映射（BEM → 连字符）后的配套规则
+   ============================================================ */
+
+/* ---- section 标题英文 ---- */
+.section-title-en {
+  display: block;
+  font-size: .42em;
+  letter-spacing: .32em;
+  color: var(--accent);
+  margin-top: .6rem;
+}
+
+/* ---- 关于：数字统计 ---- */
+.about-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-gap);
+  margin-top: 2.5rem;
+}
+.stat {
+  border: var(--border);
+  background: var(--paper);
+  box-shadow: var(--shadow-sm);
+  padding: 1.5rem 1rem;
+  text-align: center;
+}
+.stat-num {
+  display: block;
+  font-size: 2.5rem;
+  font-weight: 900;
+  color: var(--accent);
+  line-height: 1;
+  margin-bottom: .5rem;
+}
+.stat-label { font-size: .85rem; font-weight: 700; }
+
+/* ---- 联系：社交链接 ---- */
+.social-link {
+  display: inline-block;
+  padding: .7rem 1.4rem;
+  border: var(--border-thin);
+  border-color: var(--paper);
+  color: var(--paper);
+  font-weight: 800;
+  text-decoration: none;
+  transition: background .18s, color .18s, border-color .18s;
+}
+.social-link:hover {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--paper);
+}
+
+/* ---- 页脚标语 ---- */
+.footer-tag {
+  margin-top: 1rem;
+  font-size: .8rem;
+  font-weight: 800;
+  letter-spacing: .32em;
+  color: var(--accent);
+}
+
+/* ---- Hero：漂移图形容器定位 + 滚动提示 ---- */
+/* hero 直接子元素压住绝对定位的图形层（图形容器与滚动提示除外） */
+.hero > :not(.hero-shapes):not(.hero-scroll) {
+  position: relative;
+  z-index: 2;
+}
+.hero-shapes {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+}
+.hero-scroll {
+  position: absolute;
+  bottom: 2rem;
+  left: 50%;
+  translate: -50% 0;
+  z-index: 2;
+  display: inline-flex;
+  text-decoration: none;
+  padding: .5rem;
+}
+.hero-scroll-arrow {
+  width: 18px;
+  height: 18px;
+  border-right: 3px solid var(--ink);
+  border-bottom: 3px solid var(--ink);
+  transform: rotate(45deg);
+}
+
+</style>
+  <style>
+/* ============================================================
+   motion.css — 全部动效（只用 transform / opacity，扁平风禁用模糊）
+   约定：JS 需给 <html> 加 .js；滚动元素进入视口时加 .in；
+   需要 stagger 的元素由 JS 设置 --d（如 "0.05s"、"0.1s"…）
+   状态类：.in .is-hover
+   ============================================================ */
+
+/* ================= 滚动渐入：.reveal → .reveal.in =================
+   用独立的 translate 属性（而非 transform），避免覆盖元素
+   自带的静态 transform（如 .about-photo 的 rotate(-2deg)） */
+html.js .reveal { opacity: 0; translate: 0 32px; }
+html.js .reveal--left  { translate: -40px 0; }
+html.js .reveal--right { translate: 40px 0; }
+html.js .reveal--zoom  { translate: 0 0; scale: .92; }
+
+.reveal.in {
+  opacity: 1;
+  translate: 0 0;
+  scale: 1;
+  transition: opacity .6s var(--ease-out),
+              translate .7s var(--ease-out),
+              scale .7s var(--ease-out);
+  transition-delay: var(--d, 0s);
+}
+
+/* ================= Hero 逐字 stagger 入场 =================
+   JS 把标题拆成 <span class="char" style="--d:.05s">字</span>，
+   页面载入后给 .hero 加 .in */
+.hero-title .char { display: inline-block; }
+
+html.js .hero-title .char {
+  opacity: 0;
+  transform: translateY(1em) rotate(5deg);
+}
+.hero.in .char {
+  opacity: 1;
+  transform: translateY(0) rotate(0deg);
+  transition: opacity .5s var(--ease-out),
+              transform .65s var(--ease-spring);
+  transition-delay: var(--d, 0s);
+}
+html.js .hero-sub,
+html.js .hero-actions,
+html.js .hero-meta { opacity: 0; translate: 0 24px; }
+.hero.in .hero-sub,
+.hero.in .hero-actions,
+.hero.in .hero-meta {
+  opacity: 1;
+  translate: 0 0;
+  transition: opacity .6s var(--ease-out), translate .7s var(--ease-out);
+  transition-delay: var(--d, 0s);   /* JS 可给三者不同的 --d 做 stagger */
+}
+
+/* ================= 几何图形漂移（最多 6 个） =================
+   定位与尺寸在 layout.css；这里只给定形 + 漂移动画。
+   全部 keyframes 只用 translate / rotate / scale。 */
+.float { will-change: transform; }   /* 节制：仅装饰图形使用 */
+
+.float--1 { background: var(--accent); border: var(--border); border-radius: 50%; }
+.float--2 { background: var(--blue);   border: var(--border); }
+.float--3 { border: 10px solid var(--ink); border-radius: 50%; }
+.float--4 {
+  background: var(--accent);
+  clip-path: polygon(50% 0, 100% 100%, 0 100%);
+}
+.float--5 { background: var(--blue); border-radius: 50%; }
+.float--6 { background: var(--paper); border: var(--border); }
+
+html.js .float--1 { animation: drift-a 9s  ease-in-out infinite alternate; }
+html.js .float--4 { animation: drift-a 12s ease-in-out infinite alternate-reverse; }
+html.js .float--2 { animation: drift-b 8s  ease-in-out infinite alternate; }
+html.js .float--5 { animation: drift-b 10s ease-in-out infinite alternate-reverse; }
+html.js .float--3 { animation: drift-c 11s ease-in-out infinite alternate; }
+html.js .float--6 { animation: drift-c 9s  ease-in-out infinite alternate-reverse; }
+
+@keyframes drift-a {
+  from { transform: translate(0, 0) rotate(0deg); }
+  to   { transform: translate(26px, -34px) rotate(14deg); }
+}
+@keyframes drift-b {
+  from { transform: translate(0, 0) rotate(0deg) scale(1); }
+  to   { transform: translate(-30px, 24px) rotate(-12deg) scale(1.1); }
+}
+@keyframes drift-c {
+  from { transform: translate(0, 0) rotate(0deg); }
+  to   { transform: translate(20px, 28px) rotate(10deg); }
+}
+
+/* ================= 作品卡片 hover =================
+   图片 scale 放大 + 橙色遮罩信息从底部上浮（仅 hover 设备） */
+@media (hover: hover) {
+  .work-card:hover {
+    transform: translate(-4px, -4px);
+    box-shadow: var(--shadow-lg);
+  }
+  .work-card-media img { transition: transform .6s var(--ease-out); }
+  .work-card:hover .work-card-media img { transform: scale(1.08); }
+
+  .work-card-overlay {
+    transform: translateY(102%);
+    transition: transform .35s var(--ease-out);
+  }
+  .work-card:hover .work-card-overlay { transform: translateY(0); }
+}
+
+/* ================= Tab 筛选 stagger =================
+   JS 在 .tabs 上加 .in，并给每个 .tab 设 --d 做 stagger */
+html.js .tabs .tab { opacity: 0; transform: translateY(14px); }
+.tabs.in .tab {
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity .4s var(--ease-out),
+              transform .45s var(--ease-out),
+              background .18s, color .18s, box-shadow .18s;
+  transition-delay: var(--d, 0s);
+}
+
+/* ================= 技能条宽度动画 =================
+   用 scaleX（transform）代替 width，满足 transform-only 约束；
+   --w 由 JS 设为 0~1 的小数（如 0.9 = 90%） */
+.skill-fill {
+  transform: scaleX(0);
+  transform-origin: 0 50%;
+}
+.skill.in .skill-fill {
+  transform: scaleX(var(--w, 1));
+  transition: transform 1.1s var(--ease-out);
+  transition-delay: var(--d, 0s);
+}
+
+/* ================= 自定义光标 =================
+   JS：body 加 .has-cursor；用 transform: translate3d(x,y,0)
+   定位 .cursor；可交互元素 hover 时给 .cursor 加 .is-hover */
+.cursor {
+  position: fixed;
+  left: 0; top: 0;
+  z-index: 9999;
+  display: none;
+  pointer-events: none;
+  will-change: transform;
+}
+body.has-cursor .cursor { display: block; }
+
+.cursor-inner {
+  width: 34px; height: 34px;
+  margin: -17px 0 0 -17px;      /* 中心对齐 */
+  background: var(--accent);
+  border: 3px solid var(--ink);
+  transition: transform .25s var(--ease-spring), background .25s;
+}
+.cursor.is-hover .cursor-inner {
+  transform: scale(1.7) rotate(45deg);   /* 方块放大并旋转 45° */
+  background: var(--blue);
+}
+
+/* 触屏：彻底隐藏自定义光标 */
+@media (pointer: coarse), (hover: none) {
+  .cursor { display: none !important; }
+}
+
+/* ================= 顶部阅读进度条 =================
+   JS 滚动时设置 --p（0~1 的小数） */
+.progress {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  height: 6px;
+  z-index: 60;
+  pointer-events: none;
+}
+.progress-bar {
+  height: 100%;
+  background: var(--accent);
+  border-right: 3px solid var(--ink);
+  transform: scaleX(var(--p, 0));
+  transform-origin: 0 50%;
+}
+
+/* ================= 跑马灯（section 分隔带） =================
+   .marquee-track 内需放两份相同内容，才能 -50% 无缝循环 */
+.marquee {
+  overflow: hidden;
+  background: var(--ink);
+  color: var(--paper);
+  border-block: var(--border);
+  padding: 1.1rem 0;
+}
+.marquee--accent { background: var(--accent); }
+
+.marquee-track {
+  display: inline-flex;
+  align-items: center;
+  gap: 3rem;
+  padding-right: 3rem;
+  white-space: nowrap;
+  will-change: transform;
+  animation: marquee 22s linear infinite;
+}
+.marquee-track > * {
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: .05em;
+  font-size: clamp(1.2rem, 3vw, 2rem);
+}
+.marquee:hover .marquee-track { animation-play-state: paused; }
+
+@keyframes marquee {
+  to { transform: translateX(-50%); }
+}
+
+/* ================= 联系区小过渡 ================= */
+.contact-mail { transition: color .25s, border-color .25s; }
+.footer-links a { transition: color .2s; }
+
+/* ================= 光标变体：dot 小点 / ring 圆环 =================
+   HTML 里两个光标元素都带 .cursor（定位）+ .cursor-inner（视觉）；
+   变体只调整 inner 的尺寸与配色 */
+.cursor-dot .cursor-inner {
+  width: 10px; height: 10px;
+  margin: -5px 0 0 -5px;
+  background: var(--ink);
+}
+.cursor-ring .cursor-inner {
+  background: transparent;
+  border-color: var(--accent);
+}
+
+/* 有自定义光标时隐藏系统光标（body、链接、按钮一并隐藏） */
+body.has-cursor,
+body.has-cursor a,
+body.has-cursor button {
+  cursor: none;
+}
+
+/* ================= Hero 滚动提示箭头 ================= */
+html.js .hero-scroll-arrow {
+  animation: scroll-hint 1.8s var(--ease-out) infinite;
+}
+@keyframes scroll-hint {
+  0%, 100% { transform: rotate(45deg) translate(0, 0); }
+  50%      { transform: rotate(45deg) translate(7px, 7px); }
+}
+
+/* ============================================================
+   全局：prefers-reduced-motion — 关闭所有动画
+   ============================================================ */
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+
+  *, *::before, *::after {
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .01ms !important;
+  }
+
+  html.js .reveal,
+  html.js .hero-title .char,
+  html.js .tabs .tab,
+  html.js .hero-sub,
+  html.js .hero-actions,
+  html.js .hero-meta {
+    opacity: 1 !important;
+    translate: none !important;
+    scale: none !important;
+    transform: none !important;
+  }
+
+  .skill-fill { transform: scaleX(var(--w, 1)) !important; }
+
+  .marquee-track { animation: none !important; }
+  .float { animation: none !important; }
+  .cursor { display: none !important; }
+
+  .work-card-overlay { transform: none !important; }
+}
+
+</style>
+</head>
+<body>
+
+  <!-- 顶部滚动进度条 -->
+  <div class="progress" data-js="progress" aria-hidden="true">
+    <span class="progress-bar"></span>
+  </div>
+
+  <!-- 自定义光标 -->
+  <div class="cursor cursor-dot" data-js="cursor-dot" aria-hidden="true"><span class="cursor-inner"></span></div>
+  <div class="cursor cursor-ring" data-js="cursor-ring" aria-hidden="true"><span class="cursor-inner"></span></div>
+
+  <!-- 导航 -->
+  <header class="nav" data-js="nav">
+    <a class="nav-logo" href="#top" data-js="nav-logo">cristi<span class="nav-logo-mark" aria-hidden="true"></span></a>
+    <nav class="nav-links" data-js="nav-links" aria-label="主导航">
+      <a class="nav-link" href="#works">作品</a>
+      <a class="nav-link" href="#about">关于</a>
+      <a class="nav-link" href="#services">服务</a>
+      <a class="nav-link" href="#contact">联系</a>
+    </nav>
+    <button class="nav-burger" type="button" data-js="menu-btn" aria-label="打开菜单" aria-expanded="false">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+  </header>
+
+  <main>
+
+    <!-- Hero -->
+    <section id="top" class="hero reveal" data-js="hero">
+      <div class="hero-shapes" data-js="hero-shapes" aria-hidden="true">
+        <span class="float float--1" style="--d:0s"></span>
+        <span class="float float--3" style="--d:-6s"></span>
+        <span class="float float--2" style="--d:-12s"></span>
+        <span class="float float--4" style="--d:-18s"></span>
+        <span class="float float--6" style="--d:-9s"></span>
+      </div>
+      <p class="eyebrow reveal">CRISTI — FASHION PHOTOGRAPHY &amp; GRAPHIC DESIGN</p>
+      <h1 class="hero-title" data-js="hero-title">
+        <span class="char" style="--d:.05s">镜</span><span class="char" style="--d:.12s">头</span><span class="char" style="--d:.19s">与</span><span class="char" style="--d:.26s">纸</span><span class="char" style="--d:.33s">张</span><span class="char" style="--d:.40s">之</span><span class="char" style="--d:.47s">间</span>
+      </h1>
+      <p class="hero-sub reveal">时装摄影 × 平面设计 —— 用镜头捕捉情绪，用纸张构建品牌。</p>
+      <div class="hero-actions reveal">
+        <a class="btn" href="#works">浏览作品</a>
+        <a class="btn btn--ghost" href="#contact">联系合作</a>
+      </div>
+      <a class="hero-scroll" href="#works" data-js="scroll-hint" aria-label="向下滚动到作品">
+        <span class="hero-scroll-arrow"></span>
+      </a>
+    </section>
+
+    <!-- 跑马灯分隔带：hero 与 works 之间 -->
+    <div class="marquee" aria-hidden="true">
+      <div class="marquee-track">
+        <span>FASHION PHOTOGRAPHY · GRAPHIC DESIGN · 时装摄影 · 平面设计 ·&nbsp;</span>
+        <span>FASHION PHOTOGRAPHY · GRAPHIC DESIGN · 时装摄影 · 平面设计 ·&nbsp;</span>
+      </div>
+    </div>
+
+    <!-- 作品 -->
+    <section id="works" class="works reveal" data-js="works">
+      <h2 class="section-title reveal">作品 <span class="section-title-en">WORKS</span></h2>
+      <p class="section-desc reveal">点击分类切换浏览 —— 时尚大片与品牌视觉，同一套美学语言。</p>
+      <div class="tabs reveal" data-js="tabs" role="tablist" aria-label="作品分类">
+        <button class="tab is-active" type="button" data-js="tab" data-tab="all" role="tab" aria-selected="true">全部</button>
+        <button class="tab" type="button" data-js="tab" data-tab="photo" role="tab" aria-selected="false">时装摄影</button>
+        <button class="tab" type="button" data-js="tab" data-tab="design" role="tab" aria-selected="false">平面设计</button>
+      </div>
+      <div class="works-grid" data-js="works-grid"></div>
+    </section>
+
+    <!-- 关于 -->
+    <section id="about" class="about reveal" data-js="about">
+      <h2 class="section-title reveal">关于 <span class="section-title-en">ABOUT</span></h2>
+      <div class="about-copy reveal">
+        <p class="lead">我是 cristi，一名时装摄影师，也是平面设计师。</p>
+        <p>我的工作在两种介质之间来回穿梭：拍摄时我在追逐光影与姿态最真实的一瞬间；设计时我在纸上重构那种情绪，把它变成品牌可以长期使用的视觉语言。镜头负责捕捉，纸张负责沉淀 —— 两者共用同一套审美。</p>
+        <p>过去几年里，我为独立服装品牌、新锐设计师和时尚媒体拍摄 lookbook 与大片，也为他们做品牌视觉、画册与海报。拍摄与设计由同一个人完成，意味着从快门到成品的每一个环节都在同一种美学下被严格把控。</p>
+      </div>
+      <dl class="about-stats reveal">
+        <div class="stat">
+          <dt class="stat-num" data-js="stat-num" data-count="60">0</dt>
+          <dd class="stat-label">拍摄项目+</dd>
+        </div>
+        <div class="stat">
+          <dt class="stat-num" data-js="stat-num" data-count="40">0</dt>
+          <dd class="stat-label">设计项目+</dd>
+        </div>
+        <div class="stat">
+          <dt class="stat-num" data-js="stat-num" data-count="8">0</dt>
+          <dd class="stat-label">合作品牌</dd>
+        </div>
+      </dl>
+    </section>
+
+    <!-- 服务 -->
+    <section id="services" class="services reveal" data-js="services">
+      <h2 class="section-title reveal">服务 <span class="section-title-en">SERVICES</span></h2>
+      <p class="section-desc reveal">从拍摄到设计，一站式视觉交付。</p>
+      <div class="services-grid reveal">
+        <article class="service-card">
+          <p class="service-num">01</p>
+          <h3>时装摄影</h3>
+          <p>Lookbook、时尚大片、品牌 campaign 拍摄。从概念、造型到成片的全流程把控。</p>
+        </article>
+        <article class="service-card">
+          <p class="service-num">02</p>
+          <h3>品牌视觉</h3>
+          <p>Logo、视觉识别系统、品牌手册。让品牌的每一次露面都长得像自己。</p>
+        </article>
+        <article class="service-card">
+          <p class="service-num">03</p>
+          <h3>平面与画册</h3>
+          <p>海报、画册、宣传物料设计。把拍摄的情绪延伸到每一张纸上。</p>
+        </article>
+      </div>
+    </section>
+
+    <!-- 联系 -->
+    <section id="contact" class="contact reveal" data-js="contact">
+      <h2 class="section-title reveal">联系 <span class="section-title-en">CONTACT</span></h2>
+      <p class="section-desc reveal">有拍摄或设计需求？发一封邮件，聊聊你的想法。</p>
+      <a class="contact-mail reveal" href="mailto:hello@cristi.studio" data-js="contact-mail">hello@cristi.studio</a>
+      <ul class="contact-socials reveal">
+        <li><a class="social-link" href="#" data-js="social-link">微信</a></li>
+        <li><a class="social-link" href="#" data-js="social-link">小红书</a></li>
+        <li><a class="social-link" href="#" data-js="social-link">Instagram</a></li>
+      </ul>
+    </section>
+
+  </main>
+
+  <!-- 页脚 -->
+  <footer class="footer">
+    <p class="footer-copy">© <span data-js="year"></span> cristi. 保留所有权利。</p>
+    <p class="footer-tag">BETWEEN LENS &amp; PAPER</p>
+  </footer>
+
+  <script>
+/* ============================================================
+ * cristi-portfolio · data.js
+ * 数据层：作品 / 技能。挂载到 window.PF 命名空间。
+ * 经典 script 引入（data.js → effects.js → main.js），禁止 ES module。
+ * ============================================================ */
+(function () {
+  'use strict';
+
+  var PF = (window.PF = window.PF || {});
+
+  /* ---------------- 作品（12 件：6 摄影 + 6 设计） ----------------
+   * 字段：id / cat("photo"|"design") / title / titleEn / year /
+   *       tags / img / palette（卡片强调色） / desc（hover 遮罩文案）
+   */
+  PF.WORKS = [
+    {
+      id: 'w01', cat: 'photo',
+      title: '霓裳之夜', titleEn: 'NEON CITY NIGHTS', year: 2025,
+      tags: ['时装', '夜景', '胶片'],
+      img: 'data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20800%201000%22%3E%0A%20%20%3Crect%20width%3D%22800%22%20height%3D%221000%22%20fill%3D%22%23F4ECDC%22%2F%3E%0A%20%20%3Cg%20transform%3D%22rotate%2816%20400%20500%29%22%3E%0A%20%20%20%20%3Crect%20x%3D%22-300%22%20y%3D%22420%22%20width%3D%221400%22%20height%3D%22250%22%20fill%3D%22%23E45E28%22%2F%3E%0A%20%20%3C%2Fg%3E%0A%20%20%3Ccircle%20cx%3D%22612%22%20cy%3D%22225%22%20r%3D%22180%22%20fill%3D%22%23161311%22%2F%3E%0A%20%20%3Cpath%20d%3D%22M170%20700%20C220%20560%20300%20520%20360%20440%20C430%20350%20420%20250%20520%20190%20L562%20238%20C482%20288%20472%20378%20412%20458%20C342%20548%20282%20600%20262%20700%20Z%22%20fill%3D%22%23161311%22%2F%3E%0A%20%20%3Ctext%20x%3D%2228%22%20y%3D%22950%22%20font-family%3D%22Helvetica%2C%20Arial%2C%20sans-serif%22%20font-weight%3D%22900%22%20font-size%3D%22380%22%20letter-spacing%3D%22-8%22%20fill%3D%22%23E45E28%22%3E01%3C%2Ftext%3E%0A%20%20%3Ctext%20x%3D%2240%22%20y%3D%2266%22%20font-family%3D%22Helvetica%2C%20Arial%2C%20sans-serif%22%20font-size%3D%2225%22%20letter-spacing%3D%2212%22%20fill%3D%22%23161311%22%3EEDITORIAL%20%E2%80%94%20N%C2%B001%3C%2Ftext%3E%0A%20%20%3Ctext%20x%3D%22560%22%20y%3D%22950%22%20font-family%3D%22Helvetica%2C%20Arial%2C%20sans-serif%22%20font-size%3D%2230%22%20letter-spacing%3D%2210%22%20fill%3D%22%23161311%22%3EMUSE%3C%2Ftext%3E%0A%3C%2Fsvg%3E', palette: '#ff2e88',
+      desc: '城市霓虹下的高定时装大片，以胶片颗粒还原夜晚的迷离质感。'
+    },
+    {
+      id: 'w02', cat: 'photo',
+      title: '都市独白', titleEn: 'URBAN SOLILOQUY', year: 2025,
+      tags: ['街头', '黑白', '情绪'],
+      img: 'data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20800%201000%22%3E%0A%20%20%3Crect%20width%3D%22800%22%20height%3D%221000%22%20fill%3D%22%23BE3A1C%22%2F%3E%0A%20%20%3Cg%20transform%3D%22rotate%28-18%20650%20150%29%22%3E%0A%20%20%20%20%3Crect%20x%3D%22460%22%20y%3D%2260%22%20width%3D%22720%22%20height%3D%2234%22%20fill%3D%22%23161311%22%2F%3E%0A%20%20%20%20%3Crect%20x%3D%22460%22%20y%3D%22120%22%20width%3D%22720%22%20height%3D%2234%22%20fill%3D%22%23161311%22%2F%3E%0A%20%20%20%20%3Crect%20x%3D%22460%22%20y%3D%22180%22%20width%3D%22720%22%20height%3D%2234%22%20fill%3D%22%23161311%22%2F%3E%0A%20%20%3C%2Fg%3E%0A%20%20%3Ccircle%20cx%3D%22400%22%20cy%3D%221020%22%20r%3D%22430%22%20fill%3D%22%23F4ECDC%22%2F%3E%0A%20%20%3Cpath%20d%3D%22M345%201000%20C352%20880%20315%20835%20352%20745%20C390%20660%20352%20640%20408%20600%20L445%20630%20C405%20668%20438%20695%20405%20770%20C372%20838%20412%20885%20408%201000%20Z%22%20fill%3D%22%23161311%22%2F%3E%0A%20%20%3Ctext%20x%3D%2224%22%20y%3D%22380%22%20font-family%3D%22Helvetica%2C%20Arial%2C%20sans-serif%22%20font-weight%3D%22900%22%20font-size%3D%22380%22%20letter-spacing%3D%22-8%22%20fill%3D%22%23F4ECDC%22%3E02%3C%2Ftext%3E%0A%20%20%3Ctext%20x%3D%22770%22%20y%3D%22962%22%20text-anchor%3D%22end%22%20font-family%3D%22Helvetica%2C%20Arial%2C%20sans-serif%22%20font-size%3D%2226%22%20letter-spacing%3D%2212%22%20fill%3D%22%23161311%22%3ESCARLET%20%E2%80%94%20HOUR%3C%2Ftext%3E%0A%3C%2Fsvg%3E', palette: '#8e8e93',
+      desc: '黑白街头系列，用硬光与阴影讲述都市人的内心独白。'
+    },
+    {
+      id: 'w03', cat: 'photo',
+      title: '织梦者', titleEn: 'DREAMWEAVER', year: 2024,
+      tags: ['概念', '棚拍', '色彩'],
+      img: 'data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20800%201000%22%3E%0A%20%20%3Crect%20width%3D%22800%22%20height%3D%221000%22%20fill%3D%22%23EE7B2E%22%2F%3E%0A%20%20%3Cpath%20d%3D%22M170%201000%20L170%20430%20A230%20230%200%200%201%20630%20430%20L630%201000%20Z%22%20fill%3D%22%23F4ECDC%22%2F%3E%0A%20%20%3Cpath%20d%3D%22M392%20960%20C384%20810%20414%20720%20396%20600%20C382%20510%20416%20445%20398%20360%20L428%20358%20C448%20448%20412%20515%20428%20605%20C444%20705%20416%20815%20426%20960%20Z%22%20fill%3D%22%23161311%22%2F%3E%0A%20%20%3Ccircle%20cx%3D%22120%22%20cy%3D%22150%22%20r%3D%2260%22%20fill%3D%22%23BE3A1C%22%2F%3E%0A%20%20%3Ctext%20x%3D%2224%22%20y%3D%22950%22%20font-family%3D%22Helvetica%2C%20Arial%2C%20sans-serif%22%20font-weight%3D%22900%22%20font-size%3D%22380%22%20letter-spacing%3D%22-8%22%20fill%3D%22%23BE3A1C%22%3E03%3C%2Ftext%3E%0A%20%20%3Ctext%20x%3D%22470%22%20y%3D%2266%22%20font-family%3D%22Helvetica%2C%20Arial%2C%20sans-serif%22%20font-size%3D%2225%22%20letter-spacing%3D%2210%22%20fill%3D%22%23F4ECDC%22%3EVELVET%20%E2%80%94%20DOOR%3C%2Ftext%3E%0A%3C%2Fsvg%3E', palette: '#7c4dff',
+      desc: '棚内概念大片，流动的纱幔与高饱和色彩编织出一场梦境。'
+    },
+    {
+      id: 'w04', cat: 'photo',
+      title: '棱镜回响', titleEn: 'PRISM ECHO', year: 2024,
+      tags: ['实验', '光影', '妆容'],
+      img: 'data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20800%201000%22%3E%0A%20%20%3Crect%20width%3D%22800%22%20height%3D%221000%22%20fill%3D%22%23F4ECDC%22%2F%3E%0A%20%20%3Crect%20x%3D%22400%22%20width%3D%22400%22%20height%3D%221000%22%20fill%3D%22%23161311%22%2F%3E%0A%20%20%3Ccircle%20cx%3D%22400%22%20cy%3D%22470%22%20r%3D%22235%22%20fill%3D%22%23E45E28%22%2F%3E%0A%20%20%3Cpath%20d%3D%22M300%20760%20C310%20640%20270%20590%20305%20505%20C340%20425%20305%20380%20350%20320%20L378%20342%20C340%20400%20372%20445%20340%20520%20C308%20595%20348%20645%20342%20760%20Z%22%20fill%3D%22%23161311%22%2F%3E%0A%20%20%3Cpath%20d%3D%22M500%20760%20C490%20640%20530%20590%20495%20505%20C460%20425%20495%20380%20450%20320%20L422%20342%20C460%20400%20428%20445%20460%20520%20C492%20595%20452%20645%20458%20760%20Z%22%20fill%3D%22%23F4ECDC%22%2F%3E%0A%20%20%3Ctext%20x%3D%22400%22%20y%3D%22980%22%20text-anchor%3D%22middle%22%20font-family%3D%22Helvetica%2C%20Arial%2C%20sans-serif%22%20font-weight%3D%22900%22%20font-size%3D%22380%22%20letter-spacing%3D%22-8%22%20fill%3D%22%23E45E28%22%3E04%3C%2Ftext%3E%0A%20%20%3Ctext%20x%3D%2260%22%20y%3D%2266%22%20font-family%3D%22Helvetica%2C%20Arial%2C%20sans-serif%22%20font-size%3D%2224%22%20letter-spacing%3D%2210%22%20fill%3D%22%23161311%22%3EDUAL%20%E2%80%94%3C%2Ftext%3E%0A%20%20%3Ctext%20x%3D%22470%22%20y%3D%2266%22%20font-family%3D%22Helvetica%2C%20Arial%2C%20sans-serif%22%20font-size%3D%2224%22%20letter-spacing%3D%2210%22%20fill%3D%22%23F4ECDC%22%3ESTUDY%20N%C2%B004%3C%2Ftext%3E%0A%3C%2Fsvg%3E', palette: '#00c2ff',
+      desc: '棱镜折射实验系列，探索光影在面部妆容上的二次创作。'
+    },
+    {
+      id: 'w05', cat: 'photo',
+      title: '晨雾时装', titleEn: 'MORNING MIST', year: 2023,
+      tags: ['外景', '自然光', '高级感'],
+      img: 'data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20800%201000%22%3E%0A%20%20%3Crect%20width%3D%22800%22%20height%3D%221000%22%20fill%3D%22%23161311%22%2F%3E%0A%20%20%3Cg%20transform%3D%22rotate%28-24%20400%20500%29%22%3E%0A%20%20%20%20%3Crect%20x%3D%22-300%22%20y%3D%22440%22%20width%3D%221400%22%20height%3D%22130%22%20fill%3D%22%23E45E28%22%2F%3E%0A%20%20%3C%2Fg%3E%0A%20%20%3Ctext%20x%3D%22400%22%20y%3D%22640%22%20text-anchor%3D%22middle%22%20font-family%3D%22Helvetica%2C%20Arial%2C%20sans-serif%22%20font-weight%3D%22900%22%20font-size%3D%22430%22%20letter-spacing%3D%22-8%22%20fill%3D%22%23F4ECDC%22%3E05%3C%2Ftext%3E%0A%20%20%3Cpath%20d%3D%22M110%20920%20C300%20870%20500%20770%20680%20520%20L722%20562%20C535%20820%20325%20925%20140%20965%20Z%22%20fill%3D%22%23F4ECDC%22%2F%3E%0A%20%20%3Ctext%20x%3D%2240%22%20y%3D%2266%22%20font-family%3D%22Helvetica%2C%20Arial%2C%20sans-serif%22%20font-size%3D%2225%22%20letter-spacing%3D%2212%22%20fill%3D%22%23E45E28%22%3EFLASH%20%E2%80%94%20N%C2%B005%3C%2Ftext%3E%0A%3C%2Fsvg%3E', palette: '#9db8a4',
+      desc: '清晨薄雾中的外景时装，自然光下的克制与高级感。'
+    },
+    {
+      id: 'w06', cat: 'photo',
+      title: '高定剪影', titleEn: 'HAUTE SILHOUETTE', year: 2023,
+      tags: ['剪影', '极简', '轮廓'],
+      img: 'data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20800%201000%22%3E%0A%20%20%3Crect%20width%3D%22800%22%20height%3D%221000%22%20fill%3D%22%23F4ECDC%22%2F%3E%0A%20%20%3Cg%20fill%3D%22none%22%20stroke%3D%22%23E45E28%22%20stroke-width%3D%2226%22%3E%0A%20%20%20%20%3Ccircle%20cx%3D%22400%22%20cy%3D%22430%22%20r%3D%22120%22%2F%3E%0A%20%20%20%20%3Ccircle%20cx%3D%22400%22%20cy%3D%22430%22%20r%3D%22200%22%2F%3E%0A%20%20%20%20%3Ccircle%20cx%3D%22400%22%20cy%3D%22430%22%20r%3D%22280%22%2F%3E%0A%20%20%3C%2Fg%3E%0A%20%20%3Ccircle%20cx%3D%22400%22%20cy%3D%22430%22%20r%3D%22345%22%20fill%3D%22none%22%20stroke%3D%22%23161311%22%20stroke-width%3D%226%22%2F%3E%0A%20%20%3Cpath%20d%3D%22M180%20620%20C220%20480%20300%20420%20380%20340%20C460%20260%20470%20180%20520%20120%20L565%20160%20C520%20225%20505%20300%20435%20375%20C355%20460%20280%20530%20250%20640%20Z%22%20fill%3D%22%23161311%22%2F%3E%0A%20%20%3Ctext%20x%3D%2224%22%20y%3D%22955%22%20font-family%3D%22Helvetica%2C%20Arial%2C%20sans-serif%22%20font-weight%3D%22900%22%20font-size%3D%22380%22%20letter-spacing%3D%22-8%22%20fill%3D%22%23161311%22%3E06%3C%2Ftext%3E%0A%20%20%3Ctext%20x%3D%2240%22%20y%3D%2266%22%20font-family%3D%22Helvetica%2C%20Arial%2C%20sans-serif%22%20font-size%3D%2225%22%20letter-spacing%3D%2212%22%20fill%3D%22%23161311%22%3EORBIT%20%E2%80%94%20STUDY%3C%2Ftext%3E%0A%3C%2Fsvg%3E', palette: '#1c1c1e',
+      desc: '极简剪影系列，以轮廓线条致敬高定时装的建筑感。'
+    },
+    {
+      id: 'w07', cat: 'design',
+      title: '潮牌视觉系统', titleEn: 'STREET BRAND IDENTITY', year: 2025,
+      tags: ['品牌', 'VI', '潮牌'],
+      img: 'data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20800%201000%22%3E%0A%20%20%3Cdefs%3E%0A%20%20%20%20%3Cpattern%20id%3D%22grid1%22%20width%3D%2280%22%20height%3D%2280%22%20patternUnits%3D%22userSpaceOnUse%22%3E%0A%20%20%20%20%20%20%3Cpath%20d%3D%22M80%200H0V80%22%20fill%3D%22none%22%20stroke%3D%22%232B5CFF%22%20stroke-width%3D%222%22%2F%3E%0A%20%20%20%20%3C%2Fpattern%3E%0A%20%20%3C%2Fdefs%3E%0A%20%20%3Crect%20width%3D%22800%22%20height%3D%221000%22%20fill%3D%22%230C0C0E%22%2F%3E%0A%20%20%3Crect%20width%3D%22800%22%20height%3D%221000%22%20fill%3D%22url%28%23grid1%29%22%2F%3E%0A%20%20%3Cg%20transform%3D%22rotate%2845%20650%20150%29%22%3E%0A%20%20%20%20%3Crect%20x%3D%22560%22%20y%3D%2240%22%20width%3D%22180%22%20height%3D%2226%22%20fill%3D%22%23E8FF2E%22%2F%3E%0A%20%20%20%20%3Crect%20x%3D%22560%22%20y%3D%2286%22%20width%3D%22180%22%20height%3D%2226%22%20fill%3D%22%23E8FF2E%22%2F%3E%0A%20%20%20%20%3Crect%20x%3D%22560%22%20y%3D%22132%22%20width%3D%22180%22%20height%3D%2226%22%20fill%3D%22%23E8FF2E%22%2F%3E%0A%20%20%3C%2Fg%3E%0A%20%20%3Ccircle%20cx%3D%22140%22%20cy%3D%22830%22%20r%3D%2270%22%20fill%3D%22%232B5CFF%22%2F%3E%0A%20%20%3Ctext%20x%3D%2220%22%20y%3D%22950%22%20font-family%3D%22Helvetica%2C%20Arial%2C%20sans-serif%22%20font-weight%3D%22900%22%20font-size%3D%22400%22%20letter-spacing%3D%22-8%22%20fill%3D%22%23E8FF2E%22%3E01%3C%2Ftext%3E%0A%20%20%3Ctext%20x%3D%2240%22%20y%3D%2266%22%20font-family%3D%22Helvetica%2C%20Arial%2C%20sans-serif%22%20font-size%3D%2225%22%20letter-spacing%3D%2212%22%20fill%3D%22%232B5CFF%22%3EGRID%20%E2%80%94%20SYSTEM%2001%3C%2Ftext%3E%0A%3C%2Fsvg%3E', palette: '#ff5c00',
+      desc: '街头潮牌完整视觉系统：Logo、辅助图形与全套应用延展。'
+    },
+    {
+      id: 'w08', cat: 'design',
+      title: '杂志封面设计', titleEn: 'EDITORIAL COVERS', year: 2025,
+      tags: ['杂志', '排版', '封面'],
+      img: 'data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20800%201000%22%3E%0A%20%20%3Crect%20width%3D%22800%22%20height%3D%221000%22%20fill%3D%22%232B5CFF%22%2F%3E%0A%20%20%3Cg%20transform%3D%22rotate%28-16%20400%20500%29%22%3E%0A%20%20%20%20%3Crect%20x%3D%22-300%22%20y%3D%22120%22%20width%3D%221400%22%20height%3D%2290%22%20fill%3D%22%230C0C0E%22%2F%3E%0A%20%20%20%20%3Crect%20x%3D%22-300%22%20y%3D%22790%22%20width%3D%221400%22%20height%3D%2290%22%20fill%3D%22%230C0C0E%22%2F%3E%0A%20%20%3C%2Fg%3E%0A%20%20%3Crect%20x%3D%220%22%20y%3D%22880%22%20width%3D%22800%22%20height%3D%22120%22%20fill%3D%22%23E8FF2E%22%2F%3E%0A%20%20%3Ctext%20x%3D%22400%22%20y%3D%22660%22%20text-anchor%3D%22middle%22%20font-family%3D%22Helvetica%2C%20Arial%2C%20sans-serif%22%20font-weight%3D%22900%22%20font-size%3D%22560%22%20fill%3D%22%230C0C0E%22%3EAa%3C%2Ftext%3E%0A%20%20%3Ctext%20x%3D%2240%22%20y%3D%2266%22%20font-family%3D%22Helvetica%2C%20Arial%2C%20sans-serif%22%20font-size%3D%2225%22%20letter-spacing%3D%2210%22%20fill%3D%22%230C0C0E%22%3ETYPE%20STUDY%20%E2%80%94%2002%3C%2Ftext%3E%0A%20%20%3Ctext%20x%3D%22400%22%20y%3D%22962%22%20text-anchor%3D%22middle%22%20font-family%3D%22Helvetica%2C%20Arial%2C%20sans-serif%22%20font-size%3D%2226%22%20letter-spacing%3D%2212%22%20fill%3D%22%230C0C0E%22%3EFORM%20%2F%20COUNTERFORM%3C%2Ftext%3E%0A%3C%2Fsvg%3E', palette: '#d4af37',
+      desc: '时尚杂志封面系列，大胆的网格排版与字体对比。'
+    },
+    {
+      id: 'w09', cat: 'design',
+      title: '音乐节海报', titleEn: 'FESTIVAL POSTERS', year: 2024,
+      tags: ['海报', '音乐节', '插画'],
+      img: 'data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20800%201000%22%3E%0A%20%20%3Cdefs%3E%0A%20%20%20%20%3Cpattern%20id%3D%22dots3%22%20width%3D%2238%22%20height%3D%2238%22%20patternUnits%3D%22userSpaceOnUse%22%3E%0A%20%20%20%20%20%20%3Ccircle%20cx%3D%2219%22%20cy%3D%2219%22%20r%3D%227%22%20fill%3D%22%230C0C0E%22%2F%3E%0A%20%20%20%20%3C%2Fpattern%3E%0A%20%20%3C%2Fdefs%3E%0A%20%20%3Crect%20width%3D%22800%22%20height%3D%221000%22%20fill%3D%22%23E8FF2E%22%2F%3E%0A%20%20%3Crect%20y%3D%22520%22%20width%3D%22800%22%20height%3D%22480%22%20fill%3D%22url%28%23dots3%29%22%2F%3E%0A%20%20%3Ccircle%20cx%3D%22400%22%20cy%3D%22360%22%20r%3D%22200%22%20fill%3D%22%232B5CFF%22%2F%3E%0A%20%20%3Ctext%20x%3D%2224%22%20y%3D%22950%22%20font-family%3D%22Helvetica%2C%20Arial%2C%20sans-serif%22%20font-weight%3D%22900%22%20font-size%3D%22300%22%20letter-spacing%3D%22-6%22%20fill%3D%22%230C0C0E%22%3E03%3C%2Ftext%3E%0A%20%20%3Ctext%20x%3D%2240%22%20y%3D%2266%22%20font-family%3D%22Helvetica%2C%20Arial%2C%20sans-serif%22%20font-size%3D%2225%22%20letter-spacing%3D%2212%22%20fill%3D%22%230C0C0E%22%3EHALFTONE%20%E2%80%94%2003%3C%2Ftext%3E%0A%3C%2Fsvg%3E', palette: '#00e676',
+      desc: '电子音乐节主视觉海报，迷幻色彩与故障艺术的碰撞。'
+    },
+    {
+      id: 'w10', cat: 'design',
+      title: '排印实验', titleEn: 'TYPE EXPERIMENTS', year: 2024,
+      tags: ['字体', '实验', '排印'],
+      img: 'data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20800%201000%22%3E%0A%20%20%3Crect%20width%3D%22800%22%20height%3D%221000%22%20fill%3D%22%230C0C0E%22%2F%3E%0A%20%20%3Cg%20fill%3D%22none%22%20stroke%3D%22%232B5CFF%22%20stroke-width%3D%223%22%3E%0A%20%20%20%20%3Ccircle%20cx%3D%22400%22%20cy%3D%22430%22%20r%3D%2290%22%2F%3E%0A%20%20%20%20%3Ccircle%20cx%3D%22400%22%20cy%3D%22430%22%20r%3D%22150%22%2F%3E%0A%20%20%20%20%3Ccircle%20cx%3D%22400%22%20cy%3D%22430%22%20r%3D%22210%22%2F%3E%0A%20%20%20%20%3Ccircle%20cx%3D%22400%22%20cy%3D%22430%22%20r%3D%22270%22%2F%3E%0A%20%20%20%20%3Ccircle%20cx%3D%22400%22%20cy%3D%22430%22%20r%3D%22330%22%2F%3E%0A%20%20%3C%2Fg%3E%0A%20%20%3Crect%20x%3D%22690%22%20y%3D%220%22%20width%3D%2260%22%20height%3D%221000%22%20fill%3D%22%23E8FF2E%22%2F%3E%0A%20%20%3Ctext%20x%3D%22400%22%20y%3D%22590%22%20text-anchor%3D%22middle%22%20font-family%3D%22Helvetica%2C%20Arial%2C%20sans-serif%22%20font-weight%3D%22900%22%20font-size%3D%22300%22%20fill%3D%22none%22%20stroke%3D%22%23E8FF2E%22%20stroke-width%3D%224%22%20letter-spacing%3D%22-6%22%3E04%3C%2Ftext%3E%0A%20%20%3Ctext%20x%3D%2240%22%20y%3D%2266%22%20font-family%3D%22Helvetica%2C%20Arial%2C%20sans-serif%22%20font-size%3D%2225%22%20letter-spacing%3D%2212%22%20fill%3D%22%232B5CFF%22%3ESIGNAL%20%E2%80%94%20NOISE%3C%2Ftext%3E%0A%20%20%3Ctext%20x%3D%2240%22%20y%3D%22950%22%20font-family%3D%22Helvetica%2C%20Arial%2C%20sans-serif%22%20font-size%3D%2225%22%20letter-spacing%3D%2212%22%20fill%3D%22%23E8FF2E%22%3EN%C2%B004%3C%2Ftext%3E%0A%3C%2Fsvg%3E', palette: '#ff3d71',
+      desc: '中文排印实验，以解构字形探索文字的视觉张力。'
+    },
+    {
+      id: 'w11', cat: 'design',
+      title: '展览视觉', titleEn: 'EXHIBITION VISUAL', year: 2023,
+      tags: ['展览', '主视觉', '空间'],
+      img: 'data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20800%201000%22%3E%0A%20%20%3Crect%20width%3D%22800%22%20height%3D%221000%22%20fill%3D%22%230E1626%22%2F%3E%0A%20%20%3Ctext%20x%3D%22400%22%20y%3D%22470%22%20text-anchor%3D%22middle%22%20font-family%3D%22Helvetica%2C%20Arial%2C%20sans-serif%22%20font-weight%3D%22900%22%20font-size%3D%22420%22%20letter-spacing%3D%22-8%22%20fill%3D%22%23F4F4F4%22%3E05%3C%2Ftext%3E%0A%20%20%3Cg%20transform%3D%22rotate%28-20%20400%20660%29%22%3E%0A%20%20%20%20%3Crect%20x%3D%22-300%22%20y%3D%22610%22%20width%3D%221400%22%20height%3D%22110%22%20fill%3D%22%23E8FF2E%22%2F%3E%0A%20%20%3C%2Fg%3E%0A%20%20%3Ctext%20x%3D%22400%22%20y%3D%22800%22%20text-anchor%3D%22middle%22%20font-family%3D%22Helvetica%2C%20Arial%2C%20sans-serif%22%20font-size%3D%2224%22%20letter-spacing%3D%2212%22%20fill%3D%22%23E8FF2E%22%3EENCODE%20%2F%20DECODE%3C%2Ftext%3E%0A%20%20%3Cg%20fill%3D%22%23F4F4F4%22%3E%0A%20%20%20%20%3Crect%20x%3D%2260%22%20y%3D%22840%22%20width%3D%2214%22%20height%3D%22110%22%2F%3E%3Crect%20x%3D%2284%22%20y%3D%22840%22%20width%3D%226%22%20height%3D%22110%22%2F%3E%0A%20%20%20%20%3Crect%20x%3D%22100%22%20y%3D%22840%22%20width%3D%2220%22%20height%3D%22110%22%2F%3E%3Crect%20x%3D%22130%22%20y%3D%22840%22%20width%3D%228%22%20height%3D%22110%22%2F%3E%0A%20%20%20%20%3Crect%20x%3D%22148%22%20y%3D%22840%22%20width%3D%2214%22%20height%3D%22110%22%2F%3E%3Crect%20x%3D%22172%22%20y%3D%22840%22%20width%3D%226%22%20height%3D%22110%22%2F%3E%0A%20%20%20%20%3Crect%20x%3D%22188%22%20y%3D%22840%22%20width%3D%2224%22%20height%3D%22110%22%2F%3E%3Crect%20x%3D%22222%22%20y%3D%22840%22%20width%3D%2210%22%20height%3D%22110%22%2F%3E%0A%20%20%20%20%3Crect%20x%3D%22242%22%20y%3D%22840%22%20width%3D%226%22%20height%3D%22110%22%2F%3E%3Crect%20x%3D%22258%22%20y%3D%22840%22%20width%3D%2216%22%20height%3D%22110%22%2F%3E%0A%20%20%20%20%3Crect%20x%3D%22284%22%20y%3D%22840%22%20width%3D%228%22%20height%3D%22110%22%2F%3E%3Crect%20x%3D%22302%22%20y%3D%22840%22%20width%3D%2220%22%20height%3D%22110%22%2F%3E%0A%20%20%20%20%3Crect%20x%3D%22332%22%20y%3D%22840%22%20width%3D%226%22%20height%3D%22110%22%2F%3E%3Crect%20x%3D%22348%22%20y%3D%22840%22%20width%3D%2212%22%20height%3D%22110%22%2F%3E%0A%20%20%20%20%3Crect%20x%3D%22370%22%20y%3D%22840%22%20width%3D%2224%22%20height%3D%22110%22%2F%3E%3Crect%20x%3D%22404%22%20y%3D%22840%22%20width%3D%228%22%20height%3D%22110%22%2F%3E%0A%20%20%20%20%3Crect%20x%3D%22422%22%20y%3D%22840%22%20width%3D%2214%22%20height%3D%22110%22%2F%3E%3Crect%20x%3D%22446%22%20y%3D%22840%22%20width%3D%226%22%20height%3D%22110%22%2F%3E%0A%20%20%20%20%3Crect%20x%3D%22462%22%20y%3D%22840%22%20width%3D%2220%22%20height%3D%22110%22%2F%3E%3Crect%20x%3D%22492%22%20y%3D%22840%22%20width%3D%2210%22%20height%3D%22110%22%2F%3E%0A%20%20%20%20%3Crect%20x%3D%22512%22%20y%3D%22840%22%20width%3D%2216%22%20height%3D%22110%22%2F%3E%3Crect%20x%3D%22538%22%20y%3D%22840%22%20width%3D%226%22%20height%3D%22110%22%2F%3E%0A%20%20%20%20%3Crect%20x%3D%22554%22%20y%3D%22840%22%20width%3D%2222%22%20height%3D%22110%22%2F%3E%3Crect%20x%3D%22586%22%20y%3D%22840%22%20width%3D%228%22%20height%3D%22110%22%2F%3E%0A%20%20%20%20%3Crect%20x%3D%22604%22%20y%3D%22840%22%20width%3D%2214%22%20height%3D%22110%22%2F%3E%3Crect%20x%3D%22628%22%20y%3D%22840%22%20width%3D%226%22%20height%3D%22110%22%2F%3E%0A%20%20%20%20%3Crect%20x%3D%22644%22%20y%3D%22840%22%20width%3D%2218%22%20height%3D%22110%22%2F%3E%3Crect%20x%3D%22672%22%20y%3D%22840%22%20width%3D%2210%22%20height%3D%22110%22%2F%3E%0A%20%20%20%20%3Crect%20x%3D%22692%22%20y%3D%22840%22%20width%3D%2224%22%20height%3D%22110%22%2F%3E%3Crect%20x%3D%22726%22%20y%3D%22840%22%20width%3D%228%22%20height%3D%22110%22%2F%3E%0A%20%20%3C%2Fg%3E%0A%20%20%3Ctext%20x%3D%2240%22%20y%3D%2266%22%20font-family%3D%22Helvetica%2C%20Arial%2C%20sans-serif%22%20font-size%3D%2225%22%20letter-spacing%3D%2212%22%20fill%3D%22%23F4F4F4%22%3EDATA%20%E2%80%94%2005%3C%2Ftext%3E%0A%3C%2Fsvg%3E', palette: '#5e81f4',
+      desc: '摄影展主视觉与空间导视系统设计。'
+    },
+    {
+      id: 'w12', cat: 'design',
+      title: '包装设计', titleEn: 'PACKAGING DESIGN', year: 2023,
+      tags: ['包装', '香氛', '极简'],
+      img: 'data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20800%201000%22%3E%0A%20%20%3Crect%20width%3D%22800%22%20height%3D%221000%22%20fill%3D%22%232B5CFF%22%2F%3E%0A%20%20%3Crect%20x%3D%22400%22%20width%3D%22400%22%20height%3D%221000%22%20fill%3D%22%23E8FF2E%22%2F%3E%0A%20%20%3Cg%20fill%3D%22none%22%20stroke%3D%22%230C0C0E%22%20stroke-width%3D%2212%22%3E%0A%20%20%20%20%3Cpath%20d%3D%22M-20%20300%20C150%20220%20250%20380%20420%20300%20C590%20220%20690%20380%20820%20300%22%2F%3E%0A%20%20%20%20%3Cpath%20d%3D%22M-20%20430%20C150%20350%20250%20510%20420%20430%20C590%20350%20690%20510%20820%20430%22%2F%3E%0A%20%20%20%20%3Cpath%20d%3D%22M-20%20560%20C150%20480%20250%20640%20420%20560%20C590%20480%20690%20640%20820%20560%22%2F%3E%0A%20%20%3C%2Fg%3E%0A%20%20%3Ctext%20x%3D%22400%22%20y%3D%22900%22%20text-anchor%3D%22middle%22%20font-family%3D%22Helvetica%2C%20Arial%2C%20sans-serif%22%20font-weight%3D%22900%22%20font-size%3D%22380%22%20letter-spacing%3D%22-8%22%20fill%3D%22%230C0C0E%22%3E06%3C%2Ftext%3E%0A%20%20%3Ctext%20x%3D%2240%22%20y%3D%2266%22%20font-family%3D%22Helvetica%2C%20Arial%2C%20sans-serif%22%20font-size%3D%2225%22%20letter-spacing%3D%2212%22%20fill%3D%22%230C0C0E%22%3ETYPE%20%E2%80%94%20FORM%3C%2Ftext%3E%0A%3C%2Fsvg%3E', palette: '#b08d57',
+      desc: '小众香氛品牌包装设计，极简主义下的材质实验。'
+    }
+  ];
+
+  /* ---------------- 技能（百分比 0-100） ---------------- */
+  PF.SKILLS = [
+    { id: 'k1', name: '时装摄影', level: 95 },
+    { id: 'k2', name: '商业修图', level: 92 },
+    { id: 'k3', name: '品牌视觉设计', level: 88 },
+    { id: 'k4', name: '海报排印', level: 85 },
+    { id: 'k5', name: '前端开发 HTML / CSS / JS', level: 82 },
+    { id: 'k6', name: '动态影像剪辑', level: 78 }
+  ];
+
+})();
+
+</script>
+  <script>
+/* ============================================================
+ * cristi-portfolio · effects.js
+ * 动效层：全部挂载到 window.PF 命名空间。
+ *
+ * 约定：
+ *  - DOM 查询一律走 [data-js="..."] 属性钩子；唯一例外是 initReveal
+ *    查 .reveal（入场样式类，没有对应的 data-js 钩子）。
+ *  - 状态类：.is-active（选中/展开） .in（入场完成） .is-hover（光标悬停态）。
+ *  - 防御性编码：钩子元素不存在时静默跳过，不抛错、无 console 输出。
+ *  - 无外部请求。
+ * ============================================================ */
+(function () {
+  'use strict';
+
+  var PF = (window.PF = window.PF || {});
+
+  /* ---------- 内部工具：只按 data-js 钩子查询 ---------- */
+  function byHook(name) {
+    return document.querySelector('[data-js="' + name + '"]');
+  }
+  function allHooks(name) {
+    return Array.prototype.slice.call(
+      document.querySelectorAll('[data-js="' + name + '"]')
+    );
+  }
+  function clamp(n, min, max) {
+    return Math.max(min, Math.min(max, n));
+  }
+
+  /* ============================================================
+   * PF.initCursor —— 自定义光标跟随（rAF）
+   * 触屏双保险：matchMedia('(pointer: coarse)') 直接禁用；
+   * 另监听一次 touchstart，混合设备上即时拆除。
+   * ============================================================ */
+  PF.initCursor = function () {
+    var dot = byHook('cursor-dot');
+    var ring = byHook('cursor-ring');
+    if (!dot || !ring) return; // HTML 未提供光标元素：静默跳过
+
+    var coarse =
+      window.matchMedia &&
+      window.matchMedia('(pointer: coarse)').matches;
+    var reduceMotion =
+      window.matchMedia &&
+      window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (coarse || reduceMotion) {
+      dot.style.display = 'none';
+      ring.style.display = 'none';
+      return;
+    }
+
+    // 初始化成功：body 加 .has-cursor（CSS 据此显示光标并隐藏系统光标）
+    document.body.classList.add('has-cursor');
+
+    var x = -100, y = -100, rx = -100, ry = -100;
+    var shown = false, active = true, raf = 0;
+
+    dot.style.opacity = '0';
+    ring.style.opacity = '0';
+
+    function onMove(e) {
+      x = e.clientX;
+      y = e.clientY;
+      if (!shown) {
+        shown = true;
+        rx = x;
+        ry = y;
+        dot.style.opacity = '1';
+        ring.style.opacity = '1';
+      }
+    }
+
+    function loop() {
+      if (!active) return;
+      rx += (x - rx) * 0.16; // 圆环滞后跟随
+      ry += (y - ry) * 0.16;
+      dot.style.transform = 'translate3d(' + x + 'px,' + y + 'px,0)';
+      ring.style.transform = 'translate3d(' + rx + 'px,' + ry + 'px,0)';
+      raf = requestAnimationFrame(loop);
+    }
+
+    // 触屏第二道保险：首次触摸即拆除光标
+    function kill() {
+      if (!active) return;
+      active = false;
+      cancelAnimationFrame(raf);
+      window.removeEventListener('mousemove', onMove);
+      dot.style.display = 'none';
+      ring.style.display = 'none';
+      document.body.classList.remove('has-cursor');
+      dot.classList.remove('is-hover');
+      ring.classList.remove('is-hover');
+    }
+    window.addEventListener('touchstart', kill, { passive: true, once: true });
+
+    // 悬停可交互元素 → 光标元素本身加 .is-hover（放大态由 CSS 负责）
+    var HOVER_SEL =
+      'a, button, input, textarea, select, label, ' +
+      '[data-js="work-card"], [data-js="tab"], [data-js="menu-btn"]';
+    document.addEventListener('mouseover', function (e) {
+      var t =
+        e.target && e.target.closest ? e.target.closest(HOVER_SEL) : null;
+      dot.classList.toggle('is-hover', !!t);
+      ring.classList.toggle('is-hover', !!t);
+    });
+
+    // 鼠标离窗隐藏、回窗恢复
+    document.addEventListener('mouseleave', function () {
+      dot.style.opacity = '0';
+      ring.style.opacity = '0';
+    });
+    document.addEventListener('mouseenter', function () {
+      if (shown) {
+        dot.style.opacity = '1';
+        ring.style.opacity = '1';
+      }
+    });
+
+    window.addEventListener('mousemove', onMove, { passive: true });
+    raf = requestAnimationFrame(loop);
+  };
+
+  /* ============================================================
+   * PF.initReveal —— 滚动入场：IntersectionObserver 给 .reveal 加 .in
+   * （.reveal 是唯一的样式类查询例外：入场元素没有 data-js 钩子）
+   * ============================================================ */
+  PF.initReveal = function () {
+    var els = Array.prototype.slice.call(document.querySelectorAll('.reveal'));
+    if (!els.length) return;
+
+    if (!('IntersectionObserver' in window)) {
+      els.forEach(function (el) { el.classList.add('in'); });
+      return;
+    }
+    var io = new IntersectionObserver(
+      function (entries) {
+        entries.forEach(function (en) {
+          if (en.isIntersecting) {
+            en.target.classList.add('in');
+            io.unobserve(en.target);
+          }
+        });
+      },
+      { threshold: 0.15, rootMargin: '0px 0px -6% 0px' }
+    );
+    els.forEach(function (el) { io.observe(el); });
+  };
+
+  /* ============================================================
+   * PF.initProgress —— 顶部滚动进度条
+   * ============================================================ */
+  PF.initProgress = function () {
+    var wrap = byHook('progress');
+    if (!wrap) return;
+
+    var ticking = false;
+    function update() {
+      ticking = false;
+      var h = document.documentElement;
+      var max = h.scrollHeight - h.clientHeight;
+      var p = max > 0 ? h.scrollTop / max : 0;
+      // 进度条走 transform: scaleX(var(--p))，transform-only
+      wrap.style.setProperty('--p', clamp(p, 0, 1).toFixed(4));
+    }
+    function requestTick() {
+      if (!ticking) {
+        ticking = true;
+        requestAnimationFrame(update);
+      }
+    }
+    window.addEventListener('scroll', requestTick, { passive: true });
+    window.addEventListener('resize', requestTick);
+    update();
+  };
+
+  /* ============================================================
+   * PF.initTabs —— 作品分类筛选（all / photo / design）+ stagger 重播
+   * 按钮过滤键取 data-tab（兼容 data-filter）
+   * ============================================================ */
+  PF.initTabs = function () {
+    var tabs = allHooks('tab');
+    if (!tabs.length) return;
+
+    tabs.forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        tabs.forEach(function (b) {
+          b.classList.remove('is-active');
+          b.setAttribute('aria-selected', 'false');
+        });
+        btn.classList.add('is-active');
+        btn.setAttribute('aria-selected', 'true');
+        var f =
+          btn.getAttribute('data-tab') ||
+          btn.getAttribute('data-filter') ||
+          'all';
+        if (typeof PF.renderWorks === 'function') PF.renderWorks(f);
+      });
+    });
+  };
+
+  /* ============================================================
+   * PF.initSkills —— 技能条：由 PF.SKILLS 渲染 + 宽度动画
+   * CSS 约定：.skill-fill 用 --w（0~1 小数）+ scaleX 做 transform-only 动画。
+   * HTML 无 skills 容器时，在 [data-js="about"] 末尾自动创建。
+   * 另附带 [data-js="stat-num"] 数字滚动（data-count）。
+   * ============================================================ */
+  PF.initSkills = function () {
+    var skills = PF.SKILLS || [];
+
+    // 1) 渲染技能条
+    var box = byHook('skills');
+    if (!box && skills.length) {
+      var about = byHook('about');
+      if (!about) return;
+      box = document.createElement('div');
+      box.className = 'skills';
+      box.setAttribute('data-js', 'skills');
+      skills.forEach(function (s) {
+        var item = document.createElement('div');
+        item.className = 'skill';
+
+        var head = document.createElement('div');
+        head.className = 'skill-head';
+        var name = document.createElement('span');
+        name.textContent = s.name || '';
+        var pct = document.createElement('span');
+        pct.className = 'pct';
+        pct.textContent = clamp(parseInt(s.level, 10) || 0, 0, 100) + '%';
+        head.appendChild(name);
+        head.appendChild(pct);
+
+        var track = document.createElement('div');
+        track.className = 'skill-track';
+        var fill = document.createElement('div');
+        fill.className = 'skill-fill';
+        fill.setAttribute('data-level', String(clamp(parseInt(s.level, 10) || 0, 0, 100)));
+        // 初始态：scaleX(0)；transform-only 保证动画流畅
+        fill.style.transform = 'scaleX(0)';
+        fill.style.transformOrigin = 'left center';
+        fill.style.transition =
+          'transform 1s cubic-bezier(0.2, 0.7, 0.2, 1)';
+        fill.style.setProperty('--w', '0');
+        track.appendChild(fill);
+
+        item.appendChild(head);
+        item.appendChild(track);
+        box.appendChild(item);
+      });
+      about.appendChild(box);
+    }
+
+    // 2) 进入视口后 stagger 展开
+    var fills = box
+      ? Array.prototype.slice.call(box.querySelectorAll('.skill-fill'))
+      : [];
+    function lightUp() {
+      fills.forEach(function (fill, i) {
+        var lv = clamp(parseInt(fill.getAttribute('data-level'), 10) || 0, 0, 100);
+        window.setTimeout(function () {
+          fill.style.setProperty('--w', String(lv / 100));
+          fill.style.transform = 'scaleX(' + lv / 100 + ')';
+        }, i * 120);
+      });
+    }
+    if (!fills.length) {
+      /* 无技能条：直接进入数字滚动 */
+    } else if ('IntersectionObserver' in window && box) {
+      var io = new IntersectionObserver(function (entries) {
+        entries.forEach(function (en) {
+          if (en.isIntersecting) {
+            lightUp();
+            io.disconnect();
+          }
+        });
+      }, { threshold: 0.3 });
+      io.observe(box);
+    } else {
+      lightUp();
+    }
+
+    // 3) stat-num 数字滚动
+    var nums = allHooks('stat-num');
+    if (!nums.length) return;
+    function countUp(el) {
+      var target = parseInt(el.getAttribute('data-count'), 10);
+      if (isNaN(target)) return;
+      var dur = 1200;
+      var t0 = null;
+      function step(ts) {
+        if (t0 === null) t0 = ts;
+        var p = clamp((ts - t0) / dur, 0, 1);
+        var eased = 1 - Math.pow(1 - p, 3);
+        el.textContent = String(Math.round(target * eased));
+        if (p < 1) requestAnimationFrame(step);
+      }
+      requestAnimationFrame(step);
+    }
+    if ('IntersectionObserver' in window) {
+      var nio = new IntersectionObserver(function (entries) {
+        entries.forEach(function (en) {
+          if (en.isIntersecting) {
+            countUp(en.target);
+            nio.unobserve(en.target);
+          }
+        });
+      }, { threshold: 0.5 });
+      nums.forEach(function (n) { nio.observe(n); });
+    } else {
+      nums.forEach(countUp);
+    }
+  };
+
+  /* ============================================================
+   * PF.initMenu —— 移动端菜单开合
+   * 状态挂在 [data-js="nav"] 元素上的 .is-open（CSS：.nav.is-open .nav-links）
+   * ============================================================ */
+  PF.initMenu = function () {
+    var btn = byHook('menu-btn');
+    var nav = byHook('nav');
+    if (!btn || !nav) return;
+
+    function set(open) {
+      nav.classList.toggle('is-open', open);
+      btn.classList.toggle('is-active', open);
+      btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+      btn.setAttribute('aria-label', open ? '关闭菜单' : '打开菜单');
+    }
+    btn.addEventListener('click', function () {
+      set(!nav.classList.contains('is-open'));
+    });
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape' && nav.classList.contains('is-open')) set(false);
+    });
+  };
+
+  /* ============================================================
+   * PF.initSmoothScroll —— 锚点平滑滚动，抵消固定导航高度
+   * ============================================================ */
+  PF.initSmoothScroll = function () {
+    document.addEventListener('click', function (e) {
+      var a =
+        e.target && e.target.closest
+          ? e.target.closest('a[href^="#"]')
+          : null;
+      if (!a) return;
+      var hash = a.getAttribute('href');
+      if (!hash || hash === '#') return;
+      var target = document.getElementById(hash.slice(1));
+      if (!target) return;
+
+      e.preventDefault();
+      var nav = byHook('nav');
+      var offset = nav ? nav.offsetHeight : 72;
+      var top =
+        target.getBoundingClientRect().top + window.pageYOffset - offset - 8;
+      window.scrollTo({ top: Math.max(0, top), behavior: 'smooth' });
+
+      // 若移动菜单开着，随手关掉（状态在 nav.is-open 上）
+      var btn = byHook('menu-btn');
+      if (nav && nav.classList.contains('is-open')) {
+        nav.classList.remove('is-open');
+        if (btn) {
+          btn.classList.remove('is-active');
+          btn.setAttribute('aria-expanded', 'false');
+          btn.setAttribute('aria-label', '打开菜单');
+        }
+      }
+      if (window.history && history.replaceState) {
+        history.replaceState(null, '', hash);
+      }
+    });
+  };
+})();
+
+</script>
+  <script>
+/* ============================================================
+ * cristi-portfolio · main.js
+ * 入口：DOMContentLoaded 后先渲染作品网格，再按序启动所有动效 init。
+ * PF.renderWorks 挂在命名空间上，供 Tab 筛选复用。
+ * ============================================================ */
+(function () {
+  'use strict';
+
+  var PF = (window.PF = window.PF || {});
+
+  /* ---------- 内部工具 ---------- */
+  function byHook(name) {
+    return document.querySelector('[data-js="' + name + '"]');
+  }
+  function text(parent, tag, cls, str) {
+    var el = document.createElement(tag);
+    if (cls) el.className = cls;
+    el.textContent = str == null ? '' : String(str);
+    parent.appendChild(el);
+    return el;
+  }
+
+  /* ============================================================
+   * PF.renderWorks(filter) —— 渲染作品网格
+   * filter: 'all' | 'photo' | 'design'
+   * 卡片：图片 / 标题 / 年份·英文名 / tags / hover 遮罩 desc
+   * 渲染后 stagger 重播 .in（Tab 切换时复用）
+   * ============================================================ */
+  PF.renderWorks = function (filter) {
+    var grid = byHook('works-grid');
+    if (!grid) return;
+
+    var f = filter || 'all';
+    var list = PF.WORKS || [];
+    var frag = document.createDocumentFragment();
+
+    list.forEach(function (w) {
+      if (!w || (f !== 'all' && w.cat !== f)) return;
+
+      var card = document.createElement('article');
+      card.className = 'work-card';
+      card.setAttribute('data-js', 'work-card');
+      if (w.palette) card.style.setProperty('--accent', w.palette);
+
+      // 媒体
+      var media = document.createElement('div');
+      media.className = 'work-card-media';
+      var img = document.createElement('img');
+      img.src = w.img || '';
+      img.alt = w.title || '';
+      img.loading = 'lazy';
+      media.appendChild(img);
+      card.appendChild(media);
+
+      // 信息区：标题 / 年份·英文名 / tags
+      var body = document.createElement('div');
+      body.className = 'work-card-body';
+      text(body, 'h3', 'work-card-title', w.title);
+      var meta = text(
+        body,
+        'p',
+        'work-card-meta',
+        [w.titleEn, w.year].filter(Boolean).join(' · ')
+      );
+      meta.style.fontSize = '0.78rem';
+      meta.style.letterSpacing = '0.08em';
+      meta.style.opacity = '0.65';
+      meta.style.margin = '0 0 0.75rem';
+      if (w.tags && w.tags.length) {
+        var ul = document.createElement('ul');
+        ul.className = 'work-card-tags';
+        w.tags.forEach(function (t) {
+          text(ul, 'li', '', t);
+        });
+        body.appendChild(ul);
+      }
+      card.appendChild(body);
+
+      // hover 遮罩：英文名 + 描述
+      var overlay = document.createElement('div');
+      overlay.className = 'work-card-overlay';
+      text(overlay, 'strong', '', w.titleEn || w.title);
+      text(overlay, 'p', '', w.desc);
+      card.appendChild(overlay);
+
+      frag.appendChild(card);
+    });
+
+    grid.textContent = '';
+    grid.appendChild(frag);
+
+    // stagger 重播入场
+    var cards = grid.querySelectorAll('[data-js="work-card"]');
+    Array.prototype.forEach.call(cards, function (card, i) {
+      window.setTimeout(function () {
+        card.classList.add('in');
+      }, 60 + i * 70);
+    });
+  };
+
+  /* ============================================================
+   * 启动
+   * ============================================================ */
+  function boot() {
+    // 有 JS 的标记：base.css 的无 JS 降级样式据此失效
+    document.documentElement.classList.add('js');
+
+    var inits = [
+      'initCursor',
+      'initReveal',
+      'initProgress',
+      'initTabs',
+      'initSkills',
+      'initMenu',
+      'initSmoothScroll'
+    ];
+
+    try {
+      if (typeof PF.renderWorks === 'function') PF.renderWorks('all');
+    } catch (err) {
+      /* 渲染失败不阻断其余 init */
+    }
+    /* 页脚年份 */
+    try {
+      var yearEl = byHook('year');
+      if (yearEl) yearEl.textContent = String(new Date().getFullYear());
+    } catch (err) {
+      /* 忽略 */
+    }
+    inits.forEach(function (name) {
+      try {
+        if (typeof PF[name] === 'function') PF[name]();
+      } catch (err) {
+        /* 单个 init 失败不阻断其余 */
+      }
+    });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', boot);
+  } else {
+    boot();
+  }
+})();
+
+</script>
+</body>
+</html>

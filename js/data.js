@@ -17,28 +17,28 @@
       id: 'w01', cat: 'photo',
       title: '霓裳之夜', titleEn: 'NEON CITY NIGHTS', year: 2025,
       tags: ['时装', '夜景', '胶片'],
-      img: 'assets/img/photo-01.svg', palette: '#ff2e88',
+      img: 'assets/img/photo-01.jpg', palette: '#ff2e88',
       desc: '城市霓虹下的高定时装大片，以胶片颗粒还原夜晚的迷离质感。'
     },
     {
       id: 'w02', cat: 'photo',
       title: '都市独白', titleEn: 'URBAN SOLILOQUY', year: 2025,
       tags: ['街头', '黑白', '情绪'],
-      img: 'assets/img/photo-02.svg', palette: '#8e8e93',
+      img: 'assets/img/photo-02.jpg', palette: '#8e8e93',
       desc: '黑白街头系列，用硬光与阴影讲述都市人的内心独白。'
     },
     {
       id: 'w03', cat: 'photo',
       title: '织梦者', titleEn: 'DREAMWEAVER', year: 2024,
       tags: ['概念', '棚拍', '色彩'],
-      img: 'assets/img/photo-03.svg', palette: '#7c4dff',
+      img: 'assets/img/photo-03.jpg', palette: '#7c4dff',
       desc: '棚内概念大片，流动的纱幔与高饱和色彩编织出一场梦境。'
     },
     {
       id: 'w04', cat: 'photo',
       title: '棱镜回响', titleEn: 'PRISM ECHO', year: 2024,
       tags: ['实验', '光影', '妆容'],
-      img: 'assets/img/photo-04.svg', palette: '#00c2ff',
+      img: 'assets/img/photo-04.jpg', palette: '#00c2ff',
       desc: '棱镜折射实验系列，探索光影在面部妆容上的二次创作。'
     },
     {

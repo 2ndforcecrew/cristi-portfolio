@@ -254,8 +254,8 @@ for (const h of HOOKS) {
         imgProblems.push(`第${n}条 img 未指向 assets/img/：${img}`);
       } else if (!existsSync(join(ROOT, rel))) {
         imgProblems.push(`第${n}条 img 文件不存在：${rel}`);
-      } else if (!/\.svg$/i.test(rel)) {
-        imgProblems.push(`第${n}条 img 非 svg：${rel}`);
+      } else if (!/\.(svg|jpg|jpeg|png|webp)$/i.test(rel)) {
+        imgProblems.push(`第${n}条 img 非图片格式：${rel}`);
       }
     }
   });
@@ -263,7 +263,7 @@ for (const h of HOOKS) {
   check('每条 WORKS 含 id/title/img/palette', missingKeys.length === 0, missingKeys.slice(0, 5).join('; ') || `已检查 ${list.length} 条`);
   check('cat 只含 photo/design', badCat.length === 0, badCat.slice(0, 5).join('; ') || `已检查 ${list.length} 条`);
   check(
-    'img 引用的 12 个 svg 真实存在于 assets/img/',
+    'img 引用的 12 个文件真实存在于 assets/img/（svg/jpg/png/webp）',
     imgProblems.length === 0 && imgSet.size === 12,
     imgProblems.slice(0, 5).join('; ') || `引用 ${imgSet.size} 个不重复文件`,
   );
