@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * cristi-portfolio 冒烟测试（v2.0，零依赖，只用 Node 内建模块）
+ * cristi-portfolio 冒烟测试（v2.2，零依赖，只用 Node 内建模块）
  *
  * 用法（在项目根目录执行）:
  *   node test/smoke.mjs
@@ -380,6 +380,56 @@ check('data-js="social-link" 至少 1 处', countHook(htmlText, 'social-link') >
     'data-js="viewer" 的元素有 role="dialog"',
     m !== null && /role\s*=\s*["']dialog["']/.test(m[0]),
     m ? m[0].slice(0, 80) + '…' : '未找到 viewer 元素',
+  );
+}
+
+// ---------------------------------------------------------------- 10. v2.2 横移画廊 + 导航 hover
+{
+  check('无 ?v=2.1 残留', !/\?v=2\.1/.test(htmlText));
+  check('静态资源版本为 ?v=2.2', /\?v=2\.2/.test(htmlText));
+
+  const layoutCss = read('css/layout.css') ?? '';
+  const motionCss = read('css/motion.css') ?? '';
+  const mainJs = read('js/main.js') ?? '';
+  const effectsJs = read('js/effects.js') ?? '';
+
+  check(
+    'motion.css 含 panel-zoom（Ken Burns）',
+    /@keyframes\s+panel-zoom/.test(motionCss),
+  );
+  check(
+    'motion.css 含 caption 分层入场（nth-child 延迟）',
+    /\.showcase-slide\.is-active\s+\.showcase-cap\s*>\s*:nth-child\(4\)/.test(motionCss),
+  );
+  check(
+    'layout.css 含 #16A34A（导航 hover 绿底）',
+    /#16A34A/i.test(layoutCss),
+  );
+  check(
+    'layout.css 含 .nav-rail a:hover 规则',
+    /\.nav-rail\s+a:hover/.test(layoutCss),
+  );
+  check(
+    'layout.css .showcase-slides 为横向轨道（flex + max-content）',
+    /\.showcase-slides\s*\{[^}]*display\s*:\s*flex/.test(layoutCss) &&
+      /width\s*:\s*max-content/.test(layoutCss),
+  );
+  check(
+    'layout.css .showcase-slide 为固定尺寸面板',
+    /width\s*:\s*min\(\s*72vw\s*,\s*900px\s*\)/.test(layoutCss) &&
+      /height\s*:\s*min\(\s*76svh\s*,\s*720px\s*\)/.test(layoutCss),
+  );
+  check(
+    'main.js renderShowcase 含 4 层 caption（含 cap-cat）',
+    /showcase-cap-index/.test(mainJs) &&
+      /showcase-cap-title/.test(mainJs) &&
+      /showcase-cap-en/.test(mainJs) &&
+      /showcase-cap-cat/.test(mainJs),
+  );
+  check(
+    'effects.js initShowcase 用 translate3d 横移轨道',
+    /translate3d\(['"]?\s*\+?\s*\(\s*-p\s*\*\s*travel\s*\)/.test(effectsJs) ||
+      /translate3d/.test(effectsJs),
   );
 }
 

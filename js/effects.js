@@ -12,7 +12,7 @@
  *  PF.initRail     (M8) 边缘导航 IO 高亮 .is-active
  *  PF.initReveal   (M13) 板块入场 .reveal → .in
  *  PF.initProgress (M11) 顶部滚动进度条（rAF 节流）
- *  PF.initShowcase (M14) 滚动驱动作品画廊（sticky + 交叉淡入）
+ *  PF.initShowcase (M14) 纵滚驱动横移画廊（sticky + translate3d 轨道）
  *
  * 约定：
  *  - DOM 查询一律走 [data-js="..."] 钩子；例外：.reveal（入场样式类，
@@ -567,24 +567,29 @@
   };
 
   /* ============================================================
-   * PF.initShowcase (M14) —— 滚动驱动作品画廊
+   * PF.initShowcase (M14) —— 纵滚驱动横移画廊（Locomotive 式）
    * .showcase-sec 很高，.showcase 用 sticky 钉住视口；
-   * 按滚动进度算出当前 slide 下标，切 .is-active 做交叉淡入，
-   * 同步计数器与底部进度条。REDUCED：直接切，无过渡（CSS 总闸）。
+   * 按滚动进度把横向轨道 translate3d 横移；
+   * 当前面板 = 面板中心最接近视口中心的那个，切 .is-active，
+   * 触发分层 caption 入场 + Ken Burns；同步计数器与底部进度条。
+   * REDUCED：位移照常（用户滚动驱动），动效由 CSS 总闸关闭。
    * ============================================================ */
   PF.initShowcase = function () {
     if (once('showcase')) return;
     var sec = byHook('showcase-sec');
     var box = byHook('showcase');
     if (!sec || !box) return;
+    var track = byHook('showcase-slides');
     var idxEl = byHook('showcase-idx');
     var barEl = byHook('showcase-bar');
+    if (!track) return;
 
     var slides = [];
     var cur = -1;
+    var travel = 0; // 轨道总行程（px）
     function collect() {
       slides = Array.prototype.slice.call(
-        box.querySelectorAll('.showcase-slide')
+        track.querySelectorAll('.showcase-slide')
       );
     }
     collect();
@@ -604,11 +609,18 @@
       if (idxEl) idxEl.textContent = pad(i + 1);
     }
 
+    // 按轨道实际宽度设定滚动行程：travel + 1.2 屏
+    function measure() {
+      travel = Math.max(0, track.scrollWidth - box.clientWidth);
+      sec.style.height =
+        Math.round(travel + window.innerHeight * 1.2) + 'px';
+    }
+
     var ticking = false;
     function update() {
       ticking = false;
       // slides 可能由 main.js 后渲染：每次重采，数量变化时重置
-      var fresh = box.querySelectorAll('.showcase-slide');
+      var fresh = track.querySelectorAll('.showcase-slide');
       if (fresh.length !== slides.length) {
         collect();
         cur = -1;
@@ -618,11 +630,22 @@
       var total = r.height - window.innerHeight;
       var p = total > 0 ? -r.top / total : 0;
       p = Math.max(0, Math.min(1, p));
-      var i = Math.min(
-        slides.length - 1,
-        Math.floor(p * slides.length)
-      );
-      setActive(i);
+      // 横移轨道
+      track.style.transform =
+        'translate3d(' + (-p * travel).toFixed(1) + 'px,0,0)';
+      // 当前面板：中心最接近视口中心的那个
+      var vc = window.innerWidth / 2;
+      var best = 0;
+      var bestD = Infinity;
+      slides.forEach(function (s, k) {
+        var c = s.offsetLeft + s.offsetWidth / 2 - p * travel;
+        var d = Math.abs(c - vc);
+        if (d < bestD) {
+          bestD = d;
+          best = k;
+        }
+      });
+      setActive(best);
       if (barEl) {
         barEl.style.transform = 'scaleX(' + p.toFixed(4) + ')';
       }
@@ -634,7 +657,11 @@
       }
     }
     window.addEventListener('scroll', requestTick, { passive: true });
-    window.addEventListener('resize', requestTick);
+    window.addEventListener('resize', function () {
+      measure();
+      requestTick();
+    });
+    measure();
     update();
   };
 

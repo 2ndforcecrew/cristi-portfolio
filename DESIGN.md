@@ -88,18 +88,25 @@ Darkroom Terminal（暗房终端）是 cristi 作品集的视觉语言：近黑�
 - 圆角只有一种：`--pill: 999px`（胶囊）。其余全部直角。
 - **pill**：1px `line` 描边胶囊按钮；hover/选中态反白（ink 底 + bg 字）或荧光版
   （neon 底 + neon-ink 字），过渡 180ms。
-- **nav-rail**：顶部居中固定胶囊导航，含 4 个板块锚点；当前板块高亮为荧光底黑字。
+- **nav-rail**：顶部居中固定胶囊导航，含 4 个板块锚点；当前板块高亮为荧光底黑字；
+  hover / focus-visible 为 #16A34A 绿底白字（用户明确指定，第二强调色例外）。
 - **work-row**：作品列表行，button 元素；上下 1px line 分隔；左起：mono 编号、
   巨字中文标题＋英文 caption、右为分类小胶囊＋年份。桌面 hover：标题右移、
   英文变荧光黄、行底变 bg-soft。
-- **showcase**：首屏滚动驱动画廊；sticky 钉住视口，下滚按进度交叉淡入切换作品图；
-  左下 caption（序号/标题/英文名），右下计数，底部 2px neon 进度条。
+- **showcase**：首屏纵滚驱动横移画廊（Locomotive 式）；sticky 钉住视口，
+  下滚按进度 translate3d 横移轨道（行程 = 轨道宽 − 视口宽，区段高 = 行程 + 1.2 屏）；
+  作品面板 72vw/76svh（移动端 82vw/62svh），1px line 描边；
+  当前面板（中心最接近视口中心）caption 四层 stagger 入场
+  （序号/标题/英文名/分类胶囊，延迟 .05/.14/.23/.32s）＋ Ken Burns 缓推
+  （panel-zoom 7s，scale 1.04→1.16）；左下 caption，右下计数，底部 2px neon 进度条。
 - **viewer**：全屏作品查看 overlay，role=dialog；大图＋右侧信息栏；Esc/←/→ 键盘操作。
 
 ## Motion
 
 - 动效只用 transform / opacity / translate / rotate，不碰 layout 属性。
 - 入场：解码文字（ASCII 乱码→逐字定稿）、标题逐字 stagger 上升、板块 reveal 上浮。
+- 横移画廊 caption：四层 stagger 入场（opacity＋translate，.05/.14/.23/.32s 延迟），
+  Slider Revolution 式分层；当前面板图片 Ken Burns 缓推（scale 1.04→1.16，7s）。
 - 故障切片 glitch：伪元素复制文字做横向切片＋红/青偏色，短促 150–280ms。
 - 行军蚁：SVG 虚线描边 `stroke-dashoffset` 持续爬行，用于分隔线与相框。
 - 所有动效必须过两道门：`prefers-reduced-motion` 直接给终态；移动端（≤700px）
@@ -107,6 +114,7 @@ Darkroom Terminal（暗房终端）是 cristi 作品集的视觉语言：近黑�
 
 ## Don'ts
 
-- 不要引入第二种强调色；不要用纯黑 #000 / 纯白 #fff。
+- 不要引入第二种强调色（nav-rail hover 的 #16A34A 为用户明确指定的例外）；
+  不要用纯黑 #000 / 纯白 #fff（nav-rail hover 白字为用户明确指定的例外）。
 - 不要外链 webfont 或第三方库（离线要求，零外部 URL）。
 - 不要在米白文字上再加灰色色相；不要圆角卡片（除了胶囊）。

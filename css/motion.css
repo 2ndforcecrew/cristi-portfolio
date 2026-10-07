@@ -251,29 +251,37 @@ html.is-locked {
   to { translate: -50% 0; }
 }
 
-/* ---------- M14 滚动驱动画廊：slide 交叉淡入 ---------- */
-.showcase-slide {
-  transition: opacity .55s ease, visibility 0s linear .55s;
+/* ---------- M14 横移画廊：分层 caption 入场 + Ken Burns ---------- */
+/* caption 四层初始态：透明 + 下沉 26px（Slider Revolution 式分层入场） */
+.showcase-cap > * {
+  display: block;
+  opacity: 0;
+  translate: 0 26px;
+  transition: opacity .5s ease, translate .6s cubic-bezier(.22, .8, .24, 1);
 }
-.showcase-slide.is-active {
+/* 分类胶囊保持 inline-block */
+.showcase-cap > .showcase-cap-cat {
+  display: inline-block;
+}
+/* 当前面板的 caption 四层依次入场 */
+.showcase-slide.is-active .showcase-cap > * {
   opacity: 1;
-  visibility: visible;
-  transition: opacity .55s ease;
-  z-index: 1;
+  translate: 0 0;
+}
+.showcase-slide.is-active .showcase-cap > :nth-child(1) { transition-delay: .05s; }
+.showcase-slide.is-active .showcase-cap > :nth-child(2) { transition-delay: .14s; }
+.showcase-slide.is-active .showcase-cap > :nth-child(3) { transition-delay: .23s; }
+.showcase-slide.is-active .showcase-cap > :nth-child(4) { transition-delay: .32s; }
+/* Ken Burns：当前面板图片缓慢推近 */
+.showcase-slide img {
+  scale: 1.04;
 }
 .showcase-slide.is-active img {
-  animation: slide-zoom 6s ease-out forwards;
+  animation: panel-zoom 7s ease-out forwards;
 }
-@keyframes slide-zoom {
-  from { scale: 1.06; }
-  to { scale: 1; }
-}
-.showcase-slide.is-active .showcase-cap {
-  animation: cap-rise .6s ease both;
-}
-@keyframes cap-rise {
-  from { opacity: 0; translate: 0 18px; }
-  to { opacity: 1; translate: 0 0; }
+@keyframes panel-zoom {
+  from { scale: 1.04; }
+  to { scale: 1.16; }
 }
 
 /* ---------- M11 滚动进度条 ---------- */
@@ -324,9 +332,13 @@ html.is-locked {
   .cursor-ring {
     display: none !important;
   }
-  /* 画廊：直接切换，无过渡 */
+  /* 画廊：Ken Burns 关闭；caption 直接给终态（过渡已被总闸关闭） */
   .showcase-slide.is-active img,
-  .showcase-slide.is-active .showcase-cap {
+  .showcase-slide.is-active .showcase-cap > * {
     animation: none !important;
+  }
+  .showcase-slide.is-active .showcase-cap > * {
+    opacity: 1 !important;
+    translate: 0 0 !important;
   }
 }

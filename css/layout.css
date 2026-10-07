@@ -129,10 +129,16 @@ html.has-cursor * {
   padding: .5rem .95rem;
   border-radius: 999px;
   white-space: nowrap;
+  transition: background-color .18s ease, color .18s ease;
 }
 .nav-rail a.is-active {
   color: var(--neon-ink);
   background: var(--neon);
+}
+.nav-rail a:hover,
+.nav-rail a:focus-visible {
+  background: #16A34A;
+  color: #fff;
 }
 
 /* ---------- main ---------- */
@@ -230,10 +236,10 @@ html.js .reveal.in {
   flex-wrap: wrap;
 }
 
-/* ---------- 滚动驱动画廊（sticky showcase） ---------- */
+/* ---------- 纵滚驱动横移画廊（sticky showcase，Locomotive 式） ---------- */
 .showcase-sec {
   position: relative;
-  /* 高度由 JS 按作品数设定：每件约 90vh + 首尾各 50vh */
+  /* 高度由 JS 按轨道实际行程设定（travel + 1.2 屏） */
 }
 .showcase {
   position: sticky;
@@ -243,20 +249,25 @@ html.js .reveal.in {
   border-top: 1px solid var(--line);
   border-bottom: 1px solid var(--line);
 }
+/* 横向轨道：位移由 JS 写 translate3d */
 .showcase-slides {
-  position: absolute;
-  inset: 0;
-}
-.showcase-slide {
-  position: absolute;
-  inset: 0;
-  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: clamp(2rem, 6vw, 6rem);
   height: 100%;
+  width: max-content;
+  padding-inline: clamp(1.25rem, 6vw, 6rem);
+  will-change: transform;
+}
+/* 单个作品面板 */
+.showcase-slide {
+  position: relative;
+  flex: 0 0 auto;
+  width: min(72vw, 900px);
+  height: min(76svh, 720px);
   padding: 0;
-  border: 0;
+  border: 1px solid var(--line);
   background: var(--bg);
-  opacity: 0;
-  visibility: hidden;
   cursor: pointer;
 }
 .showcase-slide img {
@@ -277,8 +288,8 @@ html.js .reveal.in {
 }
 .showcase-cap {
   position: absolute;
-  left: clamp(1.25rem, 6vw, 6rem);
-  bottom: 4.5rem;
+  left: 1.25rem;
+  bottom: 1.5rem;
   z-index: 2;
   text-align: left;
 }
@@ -290,16 +301,29 @@ html.js .reveal.in {
 }
 .showcase-cap-title {
   display: block;
-  font-size: clamp(2rem, 6vw, 4.5rem);
+  font-size: clamp(1.6rem, 4vw, 3rem);
   font-weight: 800;
   line-height: 1.1;
   margin: .4rem 0 .3rem;
 }
 .showcase-cap-en {
+  display: block;
   font-family: var(--font-latin);
   font-size: .72rem;
   letter-spacing: .35em;
   text-transform: uppercase;
+  color: var(--dim);
+}
+/* 分类小胶囊：1px line 描边 pill */
+.showcase-cap-cat {
+  display: inline-block;
+  margin-top: .6rem;
+  padding: .35rem .8rem;
+  border: 1px solid var(--line);
+  border-radius: var(--pill);
+  font-family: var(--font-mono);
+  font-size: .68rem;
+  letter-spacing: .25em;
   color: var(--dim);
 }
 /* 右下 UI：计数 + 滚动提示 */
@@ -834,6 +858,14 @@ html.is-locked {
   }
   .service-title {
     font-size: clamp(1.4rem, 6vw, 2rem);
+  }
+  /* 横移画廊：移动端面板收小，标题缩小 */
+  .showcase-slide {
+    width: 82vw;
+    height: 62svh;
+  }
+  .showcase-cap-title {
+    font-size: clamp(1.4rem, 8vw, 2rem);
   }
   /* viewer 移动端：图 52vh、meta 在下、按钮全宽 ≥44px */
   .viewer-figure {

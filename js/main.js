@@ -110,9 +110,9 @@
   };
 
   /* ============================================================
-   * PF.renderShowcase — 渲染滚动驱动画廊的 12 张幻灯片
-   * 每张：全幅图 + 左下 caption（序号/标题/英文名）；点击进 viewer。
-   * 同时按作品数设定 .showcase-sec 高度（每件约 90vh + 首尾缓冲）。
+   * PF.renderShowcase — 渲染纵滚驱动横移画廊的 12 个作品面板
+   * 每张：面板图 + 左下 caption 四层（序号/标题/英文名/分类胶囊），点击进 viewer。
+   * .showcase-sec 高度先给 fallback（effects.js 会按轨道实测行程重算）。
    * ============================================================ */
   PF.renderShowcase = function () {
     var wrap = document.querySelector('[data-js="showcase-slides"]');
@@ -157,9 +157,13 @@
       var ce = document.createElement('span');
       ce.className = 'showcase-cap-en';
       ce.textContent = w.titleEn || '';
+      var cc = document.createElement('span');
+      cc.className = 'showcase-cap-cat';
+      cc.textContent = CAT_LABEL[w.cat] || w.cat;
       cap.appendChild(ci);
       cap.appendChild(ct);
       cap.appendChild(ce);
+      cap.appendChild(cc);
       s.appendChild(cap);
 
       frag.appendChild(s);
@@ -167,9 +171,9 @@
     wrap.innerHTML = '';
     wrap.appendChild(frag);
 
-    // 高度：每件 90vh + 首尾各 50vh 缓冲
+    // 高度 fallback：effects.js.initShowcase 会按轨道实测行程重算
     if (sec) {
-      sec.style.height = (works.length * 90 + 100) + 'vh';
+      sec.style.height = (works.length * 100 + 100) + 'vh';
     }
     var totalEl = document.querySelector('[data-js="showcase-total"]');
     if (totalEl) totalEl.textContent = pad2(works.length);
