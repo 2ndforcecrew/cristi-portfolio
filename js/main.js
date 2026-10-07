@@ -18,6 +18,7 @@
 
   /* 当前渲染出的作品数组（viewer 上下件在其范围内导航） */
   var _listItems = [];
+  var _viewerList = [];
 
   /* ---------- 小工具 ---------- */
   function each(nodeList, fn) {
@@ -106,6 +107,72 @@
 
     var countEl = document.querySelector('[data-js="works-count"]');
     if (countEl) countEl.textContent = String(items.length);
+  };
+
+  /* ============================================================
+   * PF.renderShowcase — 渲染滚动驱动画廊的 12 张幻灯片
+   * 每张：全幅图 + 左下 caption（序号/标题/英文名）；点击进 viewer。
+   * 同时按作品数设定 .showcase-sec 高度（每件约 90vh + 首尾缓冲）。
+   * ============================================================ */
+  PF.renderShowcase = function () {
+    var wrap = document.querySelector('[data-js="showcase-slides"]');
+    var sec = document.querySelector('[data-js="showcase-sec"]');
+    if (!wrap) return;
+    var works = Array.isArray(PF.WORKS) ? PF.WORKS : [];
+    if (!works.length) return;
+
+    var frag = document.createDocumentFragment();
+    works.forEach(function (w, i) {
+      var s = document.createElement('button');
+      s.type = 'button';
+      s.className = 'showcase-slide';
+      s.setAttribute('data-id', w.id);
+      s.setAttribute('data-cursor', 'view');
+      s.setAttribute('aria-label', w.title + ' — 查看作品');
+      s.setAttribute('aria-hidden', 'true');
+      s.tabIndex = -1;
+
+      var img = document.createElement('img');
+      img.src = w.img;
+      img.alt = w.title;
+      img.decoding = 'async';
+      // 首张立即加载（首屏），其余懒加载
+      if (i === 0) {
+        img.loading = 'eager';
+        img.fetchPriority = 'high';
+      } else {
+        img.loading = 'lazy';
+      }
+      s.appendChild(img);
+
+      var cap = document.createElement('span');
+      cap.className = 'showcase-cap';
+      cap.setAttribute('aria-hidden', 'true');
+      var ci = document.createElement('span');
+      ci.className = 'showcase-cap-index';
+      ci.textContent = pad2(i + 1) + ' / ' + pad2(works.length);
+      var ct = document.createElement('span');
+      ct.className = 'showcase-cap-title';
+      ct.textContent = w.title;
+      var ce = document.createElement('span');
+      ce.className = 'showcase-cap-en';
+      ce.textContent = w.titleEn || '';
+      cap.appendChild(ci);
+      cap.appendChild(ct);
+      cap.appendChild(ce);
+      s.appendChild(cap);
+
+      frag.appendChild(s);
+    });
+    wrap.innerHTML = '';
+    wrap.appendChild(frag);
+
+    // 高度：每件 90vh + 首尾各 50vh 缓冲
+    if (sec) {
+      sec.style.height = (works.length * 90 + 100) + 'vh';
+    }
+    var totalEl = document.querySelector('[data-js="showcase-total"]');
+    if (totalEl) totalEl.textContent = pad2(works.length);
   };
 
   /* ============================================================
@@ -234,9 +301,11 @@
     }
   }
 
-  function viewerOpen(els, index, trigger) {
-    var w = _listItems[index];
+  function viewerOpen(els, list, index, trigger) {
+    var items = Array.isArray(list) ? list : _listItems;
+    var w = items[index];
     if (!w || !els.root) return;
+    _viewerList = items;
     _viewer.index = index;
     _viewer.trigger = trigger || null;
     _viewer.open = true;
@@ -275,11 +344,11 @@
   }
 
   function viewerNav(els, dir) {
-    if (!_viewer.open || !_listItems.length) return;
-    var n = _listItems.length;
+    if (!_viewer.open || !_viewerList.length) return;
+    var n = _viewerList.length;
     var next = (_viewer.index + dir + n) % n;
     _viewer.index = next;
-    viewerFill(els, _listItems[next]);
+    viewerFill(els, _viewerList[next]);
   }
 
   PF.initViewer = function () {
@@ -299,7 +368,25 @@
         _listItems.forEach(function (w, i) {
           if (w.id === id) index = i;
         });
-        if (index >= 0) viewerOpen(els, index, row);
+        if (index >= 0) viewerOpen(els, _listItems, index, row);
+      });
+    }
+
+    /* 画廊幻灯片点击 → 用全量作品列表打开 viewer */
+    var slides = document.querySelector('[data-js="showcase-slides"]');
+    if (slides) {
+      slides.addEventListener('click', function (ev) {
+        var s = (ev.target && ev.target.closest)
+          ? ev.target.closest('.showcase-slide')
+          : null;
+        if (!s || !slides.contains(s)) return;
+        var id = s.getAttribute('data-id');
+        var works = Array.isArray(PF.WORKS) ? PF.WORKS : [];
+        var index = -1;
+        works.forEach(function (w, i) {
+          if (w.id === id) index = i;
+        });
+        if (index >= 0) viewerOpen(els, works, index, s);
       });
     }
 
@@ -423,7 +510,7 @@
    * ============================================================ */
   var EFFECT_INITS = [
     'initCursor', 'initDecode', 'initStagger', 'initGlitch',
-    'initFloatImg', 'initRail', 'initReveal', 'initProgress'
+    'initFloatImg', 'initRail', 'initReveal', 'initProgress', 'initShowcase'
   ];
   var MAIN_INITS = [
     'initTabs', 'initViewer', 'initServices', 'initStats', 'initYear'
@@ -436,6 +523,9 @@
   }
 
   function boot() {
+    // 先渲染画廊幻灯片（initShowcase 依赖），再初始化动效；
+    // 作品列表由 initTabs 负责初始渲染
+    callIfFn('renderShowcase');
     EFFECT_INITS.forEach(callIfFn);
     MAIN_INITS.forEach(callIfFn);
   }

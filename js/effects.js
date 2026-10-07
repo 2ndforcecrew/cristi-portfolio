@@ -12,6 +12,7 @@
  *  PF.initRail     (M8) 边缘导航 IO 高亮 .is-active
  *  PF.initReveal   (M13) 板块入场 .reveal → .in
  *  PF.initProgress (M11) 顶部滚动进度条（rAF 节流）
+ *  PF.initShowcase (M14) 滚动驱动作品画廊（sticky + 交叉淡入）
  *
  * 约定：
  *  - DOM 查询一律走 [data-js="..."] 钩子；例外：.reveal（入场样式类，
@@ -464,10 +465,13 @@
       { passive: true }
     );
 
-    // 事件委托：行由 main.js 动态渲染
+    // 事件委托：行由 main.js 动态渲染；
+    // showcase 幻灯片不弹浮图（大图本身已是预览，VIEW 光标盘仍由 initCursor 负责）
     var cur = null;
     function closestView(t) {
-      return t && t.closest ? t.closest('[data-cursor="view"]') : null;
+      var el = t && t.closest ? t.closest('[data-cursor="view"]') : null;
+      if (el && el.closest('.showcase')) return null;
+      return el;
     }
     document.addEventListener('mouseover', function (e) {
       var row = closestView(e.target);
@@ -560,6 +564,78 @@
     els.forEach(function (el) {
       io.observe(el);
     });
+  };
+
+  /* ============================================================
+   * PF.initShowcase (M14) —— 滚动驱动作品画廊
+   * .showcase-sec 很高，.showcase 用 sticky 钉住视口；
+   * 按滚动进度算出当前 slide 下标，切 .is-active 做交叉淡入，
+   * 同步计数器与底部进度条。REDUCED：直接切，无过渡（CSS 总闸）。
+   * ============================================================ */
+  PF.initShowcase = function () {
+    if (once('showcase')) return;
+    var sec = byHook('showcase-sec');
+    var box = byHook('showcase');
+    if (!sec || !box) return;
+    var idxEl = byHook('showcase-idx');
+    var barEl = byHook('showcase-bar');
+
+    var slides = [];
+    var cur = -1;
+    function collect() {
+      slides = Array.prototype.slice.call(
+        box.querySelectorAll('.showcase-slide')
+      );
+    }
+    collect();
+    if (!slides.length) return;
+
+    function pad(n) {
+      return (n < 10 ? '0' : '') + n;
+    }
+    function setActive(i) {
+      if (i === cur) return;
+      cur = i;
+      slides.forEach(function (s, k) {
+        s.classList.toggle('is-active', k === i);
+        s.setAttribute('aria-hidden', k === i ? 'false' : 'true');
+        s.tabIndex = k === i ? 0 : -1;
+      });
+      if (idxEl) idxEl.textContent = pad(i + 1);
+    }
+
+    var ticking = false;
+    function update() {
+      ticking = false;
+      // slides 可能由 main.js 后渲染：每次重采，数量变化时重置
+      var fresh = box.querySelectorAll('.showcase-slide');
+      if (fresh.length !== slides.length) {
+        collect();
+        cur = -1;
+      }
+      if (!slides.length) return;
+      var r = sec.getBoundingClientRect();
+      var total = r.height - window.innerHeight;
+      var p = total > 0 ? -r.top / total : 0;
+      p = Math.max(0, Math.min(1, p));
+      var i = Math.min(
+        slides.length - 1,
+        Math.floor(p * slides.length)
+      );
+      setActive(i);
+      if (barEl) {
+        barEl.style.transform = 'scaleX(' + p.toFixed(4) + ')';
+      }
+    }
+    function requestTick() {
+      if (!ticking) {
+        ticking = true;
+        raf(update);
+      }
+    }
+    window.addEventListener('scroll', requestTick, { passive: true });
+    window.addEventListener('resize', requestTick);
+    update();
   };
 
   /* ============================================================

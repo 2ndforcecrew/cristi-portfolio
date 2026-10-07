@@ -213,7 +213,7 @@ check('js/main.js 可列出', jsFiles.includes('main.js'));
 const htmlText = html ?? '';
 const HOOKS_ONCE = [
   'progress', 'cursor-dot', 'cursor-ring', 'nav-rail', 'hero-title',
-  'tabs', 'works-list', 'float-img',
+  'tabs', 'works-list', 'float-img', 'showcase', 'showcase-sec',
   'viewer', 'viewer-img', 'viewer-close', 'viewer-prev', 'viewer-next',
   'year', 'contact-mail',
 ];
@@ -338,7 +338,7 @@ check('data-js="social-link" 至少 1 处', countHook(htmlText, 'social-link') >
   }
 
   // JS 动态生成的类（main.js / effects.js 渲染或切换，CSS 已有对应定义）：白名单跳过
-  const JS_GENERATED = /^(work-row|work-row-.+|viewer|viewer-.+|char|float-img)$/;
+  const JS_GENERATED = /^(work-row|work-row-.+|viewer|viewer-.+|char|float-img|showcase-slide|showcase-.+)$/;
   const STATE_CLASSES = /^(is-active|is-open|is-locked|is-glitch|in|has-cursor|is-view|is-link)$/;
 
   const undefinedClasses = [...htmlClasses].filter((c) => {

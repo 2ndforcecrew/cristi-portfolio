@@ -105,25 +105,34 @@ html.has-cursor * {
 /* ---------- 边缘导航：桌面端左侧垂直 ---------- */
 .nav-rail {
   position: fixed;
-  left: 1rem;
-  top: 50%;
-  translate: 0 -50%;
+  top: 1rem;
+  left: 50%;
+  translate: -50% 0;
   z-index: 100;
   display: flex;
-  flex-direction: column;
-  gap: 1.25rem;
+  flex-direction: row;
+  align-items: center;
+  gap: .4rem;
+  padding: .35rem;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: rgba(10, 10, 12, .72);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
 }
 .nav-rail a {
-  writing-mode: vertical-rl;
   font-family: var(--font-mono);
   font-size: .72rem;
-  letter-spacing: .3em;
+  letter-spacing: .22em;
   text-transform: uppercase;
   color: var(--dim);
-  padding: .25rem 0;
+  padding: .5rem .95rem;
+  border-radius: 999px;
+  white-space: nowrap;
 }
 .nav-rail a.is-active {
-  color: var(--neon);
+  color: var(--neon-ink);
+  background: var(--neon);
 }
 
 /* ---------- main ---------- */
@@ -172,20 +181,19 @@ html.js .reveal.in {
   transform: none;
 }
 
-/* ================= 2. Hero（#top） ================= */
+/* ================= 2. Hero（#top）：简介 + 滚动驱动作品画廊 ================= */
 .hero {
   position: relative;
-  min-height: 100svh;
-  display: flex;
-  align-items: center;
-  padding: 6rem clamp(1.25rem, 6vw, 6rem) 5rem;
   /* §1.4：极淡点阵只在 hero 有 */
   background-image: radial-gradient(rgba(245, 245, 243, .05) 1px, transparent 1px);
   background-size: 28px 28px;
 }
-.hero-inner {
+/* 顶部简介：紧凑，不再占满首屏 */
+.hero-intro {
   width: 100%;
   max-width: 75rem;
+  margin: 0 auto;
+  padding: 7.5rem clamp(1.25rem, 6vw, 6rem) 3.5rem;
 }
 .eyebrow {
   font-family: var(--font-latin);
@@ -203,23 +211,132 @@ html.js .reveal.in {
   overflow: hidden; /* M2 stagger 遮罩 */
   margin-bottom: 1.5rem;
 }
+/* 画廊版首屏标题收小，给图片让位 */
+.hero-title--sm {
+  font-size: clamp(2.2rem, 6vw, 4.5rem);
+  margin-bottom: 1rem;
+}
 .hero-title .char {
   display: inline-block;
 }
 .hero-sub {
   color: var(--dim);
   max-width: 34rem;
-  margin-bottom: 2.25rem;
+  margin-bottom: 2rem;
 }
 .hero-actions {
   display: flex;
   gap: .75rem;
   flex-wrap: wrap;
 }
-.hero-status {
+
+/* ---------- 滚动驱动画廊（sticky showcase） ---------- */
+.showcase-sec {
+  position: relative;
+  /* 高度由 JS 按作品数设定：每件约 90vh + 首尾各 50vh */
+}
+.showcase {
+  position: sticky;
+  top: 0;
+  height: 100svh;
+  overflow: hidden;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+}
+.showcase-slides {
+  position: absolute;
+  inset: 0;
+}
+.showcase-slide {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  border: 0;
+  background: var(--bg);
+  opacity: 0;
+  visibility: hidden;
+  cursor: pointer;
+}
+.showcase-slide img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  /* 图片压暗，保证 caption 可读 */
+  filter: brightness(.82);
+}
+.showcase-slide::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(10,10,12,.72) 0%, transparent 42%);
+  pointer-events: none;
+}
+.showcase-cap {
   position: absolute;
   left: clamp(1.25rem, 6vw, 6rem);
-  bottom: 2.25rem;
+  bottom: 4.5rem;
+  z-index: 2;
+  text-align: left;
+}
+.showcase-cap-index {
+  font-family: var(--font-mono);
+  font-size: .72rem;
+  letter-spacing: .3em;
+  color: var(--neon);
+}
+.showcase-cap-title {
+  display: block;
+  font-size: clamp(2rem, 6vw, 4.5rem);
+  font-weight: 800;
+  line-height: 1.1;
+  margin: .4rem 0 .3rem;
+}
+.showcase-cap-en {
+  font-family: var(--font-latin);
+  font-size: .72rem;
+  letter-spacing: .35em;
+  text-transform: uppercase;
+  color: var(--dim);
+}
+/* 右下 UI：计数 + 滚动提示 */
+.showcase-ui {
+  position: absolute;
+  right: clamp(1.25rem, 6vw, 6rem);
+  bottom: 4.5rem;
+  z-index: 2;
+  display: flex;
+  align-items: baseline;
+  gap: 1.25rem;
+  font-family: var(--font-mono);
+  font-size: .72rem;
+  letter-spacing: .25em;
+  color: var(--dim);
+}
+.showcase-count { color: var(--ink); }
+/* 底部细进度条 */
+.showcase-bar {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 3;
+  height: 2px;
+  background: var(--line);
+}
+.showcase-bar-fill {
+  display: block;
+  height: 100%;
+  width: 100%;
+  background: var(--neon);
+  transform: scaleX(0);
+  transform-origin: 0 50%;
+}
+.hero-status {
+  margin-top: 3rem;
   font-family: var(--font-mono);
   font-size: .72rem;
   letter-spacing: .25em;
@@ -675,18 +792,17 @@ html.is-locked {
   .cursor-ring {
     display: none !important;
   }
-  /* 边缘导航 → 底部固定横向胶囊条 */
+  /* 导航：移动端保持顶部中间，更紧凑 */
   .nav-rail {
-    left: 50%;
-    right: auto;
-    top: auto;
-    bottom: calc(.8rem + env(safe-area-inset-bottom));
-    translate: -50% 0;
-    flex-direction: row;
-    gap: .25rem;
-    background: var(--bg-soft);
-    border: 1px solid var(--line);
-    border-radius: var(--pill);
+    top: .6rem;
+    gap: .15rem;
+    padding: .25rem;
+    max-width: calc(100vw - 1.5rem);
+    overflow-x: auto;
+  }
+  .nav-rail a {
+    font-size: .66rem;
+    letter-spacing: .14em;
     padding: .45rem .7rem;
   }
   .nav-rail a {
@@ -695,13 +811,7 @@ html.is-locked {
     letter-spacing: .18em;
     padding: .5rem .6rem;
   }
-  /* 防底部导航条遮挡内容 */
-  main {
-    padding-bottom: 6rem;
-  }
-  .footer {
-    padding-bottom: 7rem;
-  }
+  /* 顶部导航不再遮挡底部，移除旧的防遮挡 padding */
   /* 悬停浮图不渲染 */
   .float-img {
     display: none;

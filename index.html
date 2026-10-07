@@ -43,13 +43,25 @@
 
     <!-- Hero -->
     <section id="top" class="hero" data-js="hero">
-      <div class="hero-inner">
+      <div class="hero-intro">
         <p class="eyebrow" data-js="decode">FASHION PHOTOGRAPHY × GRAPHIC DESIGN × CODE</p>
-        <h1 class="hero-title" data-js="hero-title" data-text="镜头与纸张之间">镜头与纸张之间</h1>
+        <h1 class="hero-title hero-title--sm" data-js="hero-title" data-text="镜头与纸张之间">镜头与纸张之间</h1>
         <p class="hero-sub">平面设计师 · 时尚摄影师 · 编程工程师<br>用镜头捕捉情绪，用纸张构建品牌。</p>
         <div class="hero-actions">
           <a class="pill pill--neon" href="#works">浏览作品</a>
           <a class="pill" href="#contact">联系合作</a>
+        </div>
+        <p class="hero-status" aria-hidden="true">SYS.STATUS: ONLINE ── SCROLL ↓</p>
+      </div>
+      <!-- 滚动驱动作品画廊：钉住视口，下滚切换图片，点击进 viewer -->
+      <div class="showcase-sec" data-js="showcase-sec">
+        <div class="showcase" data-js="showcase">
+          <div class="showcase-slides" data-js="showcase-slides" aria-live="off"></div>
+          <div class="showcase-ui" aria-hidden="true">
+            <span class="showcase-count"><span data-js="showcase-idx">01</span> / <span data-js="showcase-total">12</span></span>
+            <span class="showcase-hint">SCROLL ↓</span>
+          </div>
+          <div class="showcase-bar" aria-hidden="true"><span class="showcase-bar-fill" data-js="showcase-bar"></span></div>
         </div>
       </div>
       <p class="hero-status" aria-hidden="true">SYS.STATUS: ONLINE ── SCROLL ↓</p>
