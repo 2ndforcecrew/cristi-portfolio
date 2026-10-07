@@ -38,7 +38,7 @@
   height: 0;
   overflow: hidden;
 }
-.hero--acid > .acid-stickers {
+.hero.hero--acid > .acid-stickers {
   position: absolute;
   inset: 0;
   z-index: 1;
@@ -48,7 +48,7 @@
 
 /* ---------- C. 巨型喷漆标题 ---------- */
 .hero--acid .hero-title {
-  font-size: clamp(4.5rem, 18vw, 16rem);
+  font-size: clamp(4rem, 17vw, 12rem);
   line-height: .92;
   font-weight: 900;
   letter-spacing: -.03em;
