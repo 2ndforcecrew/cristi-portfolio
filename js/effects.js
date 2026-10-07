@@ -1,20 +1,80 @@
 /* ============================================================
- * cristi-portfolio · effects.js
- * 动效层：全部挂载到 window.PF 命名空间。
+ * cristi-portfolio · effects.js（v2.0 重写）
+ * 动效层：全部挂载到 window.PF 命名空间，经典 script（非 module）。
+ *
+ * 导出：
+ *  PF.initCursor   (M3) 自定义光标：dot 即时跟随＋ring rAF lerp；
+ *                       [data-cursor="view"] 行 hover 时 ring 扩 84px＋显 VIEW
+ *  PF.initDecode   (M1) 解码文字入场（IO 触发一次，~600ms）
+ *  PF.initStagger  (M2) hero-title 按字拆 .char，--d = i*45ms
+ *  PF.initGlitch   (M6) hero-title 每 ~7s 故障切片 280ms
+ *  PF.initFloatImg (M4) 作品行悬停浮图（单例，rAF lerp 跟随）
+ *  PF.initRail     (M8) 边缘导航 IO 高亮 .is-active
+ *  PF.initReveal   (M13) 板块入场 .reveal → .in
+ *  PF.initProgress (M11) 顶部滚动进度条（rAF 节流）
  *
  * 约定：
- *  - DOM 查询一律走 [data-js="..."] 属性钩子；唯一例外是 initReveal
- *    查 .reveal（入场样式类，没有对应的 data-js 钩子）。
- *  - 状态类：.is-active（选中/展开） .in（入场完成） .is-hover（光标悬停态）。
- *  - 防御性编码：钩子元素不存在时静默跳过，不抛错、无 console 输出。
- *  - 无外部请求。
+ *  - DOM 查询一律走 [data-js="..."] 钩子；例外：.reveal（入场样式类，
+ *    无对应钩子，沿用 v1 约定）、.progress-bar（progress 钩子内部子元素）、
+ *    [data-cursor="view"]（main.js 动态渲染的行，属性选择器）。
+ *  - 状态类只用白名单：has-cursor / in / is-active / is-glitch / char；
+ *    其余视觉态走内联样式，不新增类名契约。
+ *  - 防御性编码：钩子缺失静默跳过，不抛错、无 console 输出、无外部请求。
+ *
+ * 给 CSS / main.js 实现者的契约：
+ *  - html.has-cursor 下 *{cursor:none}；.cursor-dot/.cursor-ring 必须用
+ *    `translate: -50% -50%` 做居中（JS 写内联 transform，会覆盖 transform 属性）。
+ *  - .cursor-ring 需要 width/height/opacity 的 transition；VIEW 文字排版
+ *    （mono 居中）由 CSS 负责，JS 只填 textContent。
+ *  - .float-img 初始 opacity:0 + visibility:hidden（移动端 display:none），
+ *    需要 opacity transition 做淡入淡出。
+ *  - .hero-title.is-glitch 的 ::before/::after 用 attr(data-text) 做切片。
+ *  - .char 用 var(--d) 做 transition-delay；父级 overflow:hidden 做遮罩。
+ *  - main.js 渲染的作品行须带 data-cursor="view" 与 data-id（对应 PF.WORKS id）。
  * ============================================================ */
 (function () {
   'use strict';
 
   var PF = (window.PF = window.PF || {});
 
-  /* ---------- 内部工具：只按 data-js 钩子查询 ---------- */
+  /* ---------------- 环境门控 ---------------- */
+  var REDUCED = !!(
+    window.matchMedia &&
+    window.matchMedia('(prefers-reduced-motion: reduce)').matches
+  );
+  var FINE = !!(
+    window.matchMedia &&
+    window.matchMedia('(hover: hover) and (pointer: fine)').matches
+  );
+  function narrow() {
+    return window.innerWidth <= 700;
+  }
+
+  /* ---------------- rAF 垫片 ---------------- */
+  var raf = (function () {
+    if (window.requestAnimationFrame) {
+      return function (fn) {
+        return window.requestAnimationFrame(fn);
+      };
+    }
+    return function (fn) {
+      return window.setTimeout(function () {
+        fn(Date.now());
+      }, 16);
+    };
+  })();
+  var caf = (function () {
+    if (window.cancelAnimationFrame) {
+      return function (id) {
+        window.cancelAnimationFrame(id);
+      };
+    }
+    return function (id) {
+      window.clearTimeout(id);
+    };
+  })();
+
+  /* ---------------- data-js 查询 ---------------- */
   function byHook(name) {
     return document.querySelector('[data-js="' + name + '"]');
   }
@@ -23,113 +83,467 @@
       document.querySelectorAll('[data-js="' + name + '"]')
     );
   }
-  function clamp(n, min, max) {
-    return Math.max(min, Math.min(max, n));
+
+  /* ---------------- 防重复初始化 ---------------- */
+  var inited = {};
+  function once(key) {
+    if (inited[key]) return true;
+    inited[key] = true;
+    return false;
   }
 
   /* ============================================================
-   * PF.initCursor —— 自定义光标跟随（rAF）
-   * 触屏双保险：matchMedia('(pointer: coarse)') 直接禁用；
-   * 另监听一次 touchstart，混合设备上即时拆除。
+   * 共享 rAF ticker（M3 光标 ring＋M4 浮图共用）
+   * visibilitychange：hidden 暂停，visible 恢复。
+   * ============================================================ */
+  var tickFns = [];
+  var tickOn = false;
+  var tickId = 0;
+
+  function tickLoop() {
+    if (!tickOn) return;
+    for (var i = 0; i < tickFns.length; i++) {
+      try {
+        tickFns[i]();
+      } catch (e) {
+        /* 单个 tick 失败不影响其余，静默 */
+      }
+    }
+    tickId = raf(tickLoop);
+  }
+  function tickStart() {
+    if (tickOn || !tickFns.length) return;
+    tickOn = true;
+    if (document.hidden) return; // 等 visible 时由 visibilitychange 恢复
+    tickId = raf(tickLoop);
+  }
+  function tickStop() {
+    tickOn = false;
+    if (tickId) {
+      caf(tickId);
+      tickId = 0;
+    }
+  }
+  function tickAdd(fn) {
+    if (typeof fn !== 'function') return;
+    if (tickFns.indexOf(fn) === -1) tickFns.push(fn);
+    tickStart();
+  }
+  if (document.addEventListener) {
+    document.addEventListener('visibilitychange', function () {
+      if (document.hidden) tickStop();
+      else tickStart();
+    });
+  }
+
+  /* ============================================================
+   * PF.initCursor (M3) —— 自定义光标
+   * 门控：仅 FINE 且 >700px 且 !REDUCED 初始化；否则隐藏光标元素。
+   * 首次 mousemove 后 html 加 .has-cursor（CSS 据此隐藏原生光标）。
+   * [data-cursor="view"] 行 hover：ring 扩到 84px、内显 VIEW、dot 隐藏。
    * ============================================================ */
   PF.initCursor = function () {
+    if (once('cursor')) return;
     var dot = byHook('cursor-dot');
     var ring = byHook('cursor-ring');
-    if (!dot || !ring) return; // HTML 未提供光标元素：静默跳过
+    if (!dot || !ring) return;
 
-    var coarse =
-      window.matchMedia &&
-      window.matchMedia('(pointer: coarse)').matches;
-    var reduceMotion =
-      window.matchMedia &&
-      window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    if (coarse || reduceMotion) {
+    if (REDUCED || !FINE || narrow()) {
       dot.style.display = 'none';
       ring.style.display = 'none';
       return;
     }
 
-    // 初始化成功：body 加 .has-cursor（CSS 据此显示光标并隐藏系统光标）
-    document.body.classList.add('has-cursor');
+    // 光标元素不拦截鼠标事件（双保险，CSS 也应设 pointer-events:none）
+    dot.style.pointerEvents = 'none';
+    ring.style.pointerEvents = 'none';
 
-    var x = -100, y = -100, rx = -100, ry = -100;
-    var shown = false, active = true, raf = 0;
+    var html = document.documentElement;
+    var mx = -100,
+      my = -100,
+      rx = -100,
+      ry = -100;
+    var seen = false; // 是否收到过 mousemove
+    var outside = false; // 光标是否离开窗口
+    var viewEl = null; // 当前 hover 的 [data-cursor="view"] 行
 
     dot.style.opacity = '0';
     ring.style.opacity = '0';
 
-    function onMove(e) {
-      x = e.clientX;
-      y = e.clientY;
-      if (!shown) {
-        shown = true;
-        rx = x;
-        ry = y;
-        dot.style.opacity = '1';
-        ring.style.opacity = '1';
-      }
+    function paint() {
+      var on = seen && !outside;
+      ring.style.opacity = on ? '1' : '0';
+      dot.style.opacity = on && !viewEl ? '1' : '0'; // VIEW 态 dot 隐藏
     }
 
-    function loop() {
-      if (!active) return;
-      rx += (x - rx) * 0.16; // 圆环滞后跟随
-      ry += (y - ry) * 0.16;
-      dot.style.transform = 'translate3d(' + x + 'px,' + y + 'px,0)';
+    // ring 滞后跟随：注册到共享 ticker
+    tickAdd(function () {
+      rx += (mx - rx) * 0.18;
+      ry += (my - ry) * 0.18;
       ring.style.transform = 'translate3d(' + rx + 'px,' + ry + 'px,0)';
-      raf = requestAnimationFrame(loop);
-    }
-
-    // 触屏第二道保险：首次触摸即拆除光标
-    function kill() {
-      if (!active) return;
-      active = false;
-      cancelAnimationFrame(raf);
-      window.removeEventListener('mousemove', onMove);
-      dot.style.display = 'none';
-      ring.style.display = 'none';
-      document.body.classList.remove('has-cursor');
-      dot.classList.remove('is-hover');
-      ring.classList.remove('is-hover');
-    }
-    window.addEventListener('touchstart', kill, { passive: true, once: true });
-
-    // 悬停可交互元素 → 光标元素本身加 .is-hover（放大态由 CSS 负责）
-    var HOVER_SEL =
-      'a, button, input, textarea, select, label, ' +
-      '[data-js="work-card"], [data-js="tab"], [data-js="menu-btn"]';
-    document.addEventListener('mouseover', function (e) {
-      var t =
-        e.target && e.target.closest ? e.target.closest(HOVER_SEL) : null;
-      dot.classList.toggle('is-hover', !!t);
-      ring.classList.toggle('is-hover', !!t);
     });
 
-    // 鼠标离窗隐藏、回窗恢复
+    function onMove(e) {
+      mx = e.clientX;
+      my = e.clientY;
+      dot.style.transform = 'translate3d(' + mx + 'px,' + my + 'px,0)'; // 即时跟随
+      if (!seen) {
+        seen = true;
+        rx = mx;
+        ry = my;
+        html.classList.add('has-cursor');
+        paint();
+      }
+    }
+    window.addEventListener('mousemove', onMove, { passive: true });
+
+    function setView(row) {
+      if (row === viewEl) return;
+      viewEl = row;
+      // VIEW 态走 CSS 类（.cursor-ring.is-view：84px 荧光圆＋::after 显 VIEW 字）
+      ring.classList.toggle('is-view', !!row);
+      paint();
+    }
+
+    // 事件委托：作品行由 main.js 动态渲染；
+    // 非作品行的链接/按钮 hover 时 ring 缩 0.7（.is-link）
+    function closestView(t) {
+      return t && t.closest ? t.closest('[data-cursor="view"]') : null;
+    }
+    function closestLink(t) {
+      return t && t.closest ? t.closest('a,button') : null;
+    }
+    document.addEventListener('mouseover', function (e) {
+      var row = closestView(e.target);
+      setView(row);
+      ring.classList.toggle('is-link', !row && !!closestLink(e.target));
+    });
+    document.addEventListener('mouseout', function (e) {
+      if (viewEl) {
+        var to = e.relatedTarget;
+        if (!to || closestView(to) !== viewEl) setView(null);
+      }
+    });
+
+    // 离窗隐藏、回窗恢复
     document.addEventListener('mouseleave', function () {
-      dot.style.opacity = '0';
-      ring.style.opacity = '0';
+      outside = true;
+      paint();
     });
     document.addEventListener('mouseenter', function () {
-      if (shown) {
-        dot.style.opacity = '1';
-        ring.style.opacity = '1';
-      }
+      outside = false;
+      paint();
     });
-
-    window.addEventListener('mousemove', onMove, { passive: true });
-    raf = requestAnimationFrame(loop);
   };
 
   /* ============================================================
-   * PF.initReveal —— 滚动入场：IntersectionObserver 给 .reveal 加 .in
-   * （.reveal 是唯一的样式类查询例外：入场元素没有 data-js 钩子）
+   * PF.initDecode (M1) —— 解码文字入场
+   * [data-js="decode"] 进入视口（IO，一次）：从左到右逐字解码，~600ms 定稿。
+   * 字符集：CJK 池（日月水火木金土人手心言）＋符号/数字池。
+   * REDUCED / 非 FINE / ≤700px：直接显示终稿（HTML 里已是终稿文本）。
+   * ============================================================ */
+  var DECODE_CJK = '日月水火木金土人手心言';
+  var DECODE_SYM = '×/\\|<>[]{}#$%&*@!?+=01';
+  var DECODE_POOL = DECODE_CJK + DECODE_SYM;
+  function randGlyph() {
+    return DECODE_POOL.charAt(Math.floor(Math.random() * DECODE_POOL.length));
+  }
+
+  function decodeEl(el) {
+    var finalText = el.textContent;
+    if (!finalText) return;
+    var chars = Array.from(finalText);
+    var dur = 600;
+    var t0 = 0;
+    function frame(ts) {
+      if (!t0) t0 = ts;
+      var p = Math.min(1, (ts - t0) / dur);
+      var settled = Math.floor(p * chars.length);
+      var out = '';
+      for (var i = 0; i < chars.length; i++) {
+        var c = chars[i];
+        if (i < settled || c === ' ' || c === '\n' || c === '\t') out += c;
+        else out += randGlyph();
+      }
+      el.textContent = out;
+      if (p < 1) {
+        raf(frame);
+      } else {
+        el.textContent = finalText; // 确保与终稿一字不差
+      }
+    }
+    raf(frame);
+  }
+
+  PF.initDecode = function () {
+    if (once('decode')) return;
+    var els = allHooks('decode');
+    if (!els.length) return;
+    // 降级：直接终稿
+    if (REDUCED || !FINE || narrow()) return;
+    if (!('IntersectionObserver' in window)) return;
+    var io = new IntersectionObserver(
+      function (entries) {
+        entries.forEach(function (en) {
+          if (!en.isIntersecting) return;
+          io.unobserve(en.target);
+          decodeEl(en.target);
+        });
+      },
+      { threshold: 0.4 }
+    );
+    els.forEach(function (el) {
+      // 含子元素的节点跳过（只处理纯文本，避免破坏结构）
+      if (!el.querySelector('*')) io.observe(el);
+    });
+  };
+
+  /* ============================================================
+   * PF.initStagger (M2) —— hero 标题逐字 stagger
+   * 按字拆成 .char span（中文按字），--d = i*45ms；首屏立即执行。
+   * REDUCED 由 CSS 侧处理（无位移直接显示），JS 照常拆字。
+   * ============================================================ */
+  PF.initStagger = function () {
+    if (once('stagger')) return;
+    var title = byHook('hero-title');
+    if (!title) return;
+    if (title.querySelector('.char')) return; // 已拆过：防重复执行
+    var text = title.textContent;
+    if (!text) return;
+    title.setAttribute('aria-label', text);
+    title.textContent = '';
+    Array.from(text).forEach(function (ch, i) {
+      var s = document.createElement('span');
+      s.className = 'char';
+      s.setAttribute('aria-hidden', 'true');
+      s.style.setProperty('--d', i * 45 + 'ms');
+      s.textContent = ch === ' ' ? ' ' : ch;
+      title.appendChild(s);
+    });
+    // 触发入场：等首帧把 110% 初始态绘制出来后再加 .in，
+    // stagger 过渡才能跑起来（CSS：.hero-title.in .char）
+    raf(function () {
+      raf(function () {
+        title.classList.add('in');
+      });
+    });
+  };
+
+  /* ============================================================
+   * PF.initGlitch (M6) —— 故障切片
+   * hero-title 每 ~7s 加 .is-glitch，280ms 后移除；
+   * document.hidden 时暂停；REDUCED 跳过。
+   * （data-text 已在 HTML 上，伪元素用 attr(data-text) 复制文字）
+   * ============================================================ */
+  PF.initGlitch = function () {
+    if (once('glitch')) return;
+    if (REDUCED || narrow()) return; // 移动端不执行（BUILD_PLAN §3 M6）
+    var title = byHook('hero-title');
+    if (!title) return;
+    if (!title.getAttribute('data-text')) {
+      title.setAttribute('data-text', title.textContent || '');
+    }
+    function zap() {
+      if (!document.hidden) {
+        title.classList.add('is-glitch');
+        window.setTimeout(function () {
+          title.classList.remove('is-glitch');
+        }, 280);
+      }
+      window.setTimeout(zap, 6500 + Math.random() * 2500); // ~7s
+    }
+    window.setTimeout(zap, 4000 + Math.random() * 3000);
+
+    // 作品行 hover：标题做一次 150ms 故障切片（行由 main.js 动态渲染，事件委托）
+    var rowBusy = null;
+    document.addEventListener('mouseover', function (e) {
+      var row =
+        e.target && e.target.closest
+          ? e.target.closest('.work-row')
+          : null;
+      if (!row || row === rowBusy) return;
+      rowBusy = row;
+      var t = row.querySelector('.work-row-title');
+      if (t) {
+        if (!t.getAttribute('data-text')) {
+          t.setAttribute('data-text', t.textContent || '');
+        }
+        t.classList.add('is-glitch');
+        window.setTimeout(function () {
+          t.classList.remove('is-glitch');
+        }, 150);
+      }
+    });
+    document.addEventListener('mouseout', function (e) {
+      if (!rowBusy) return;
+      var to = e.relatedTarget;
+      if (
+        !to ||
+        !to.closest ||
+        to.closest('.work-row') !== rowBusy
+      ) {
+        rowBusy = null;
+      }
+    });
+  };
+
+  /* ============================================================
+   * PF.initFloatImg (M4) —— 作品行悬停浮图
+   * 单例 [data-js="float-img"]；行 mouseenter 设 img src；
+   * rAF lerp 跟随光标，偏移 (24,-40)，rotate(3deg)；
+   * requestIdleCallback（无则 setTimeout）预加载全部作品图。
+   * 门控：非 FINE 或 ≤700px 跳过（CSS 侧 display:none）。
+   * ============================================================ */
+  PF.initFloatImg = function () {
+    if (once('floatimg')) return;
+    if (REDUCED || !FINE || narrow()) return;
+    var box = byHook('float-img');
+    if (!box) return;
+    var img = box.querySelector('img');
+    if (!img) return;
+    var works = PF.WORKS || [];
+
+    box.style.pointerEvents = 'none';
+
+    // 预加载全部作品图（首屏零成本：hover/viewer 时才需要）
+    function preloadAll() {
+      for (var i = 0; i < works.length; i++) {
+        var src = works[i] && works[i].img;
+        if (src) {
+          var im = new Image();
+          im.src = src;
+        }
+      }
+    }
+    if ('requestIdleCallback' in window) {
+      window.requestIdleCallback(preloadAll, { timeout: 2500 });
+    } else {
+      window.setTimeout(preloadAll, 1200);
+    }
+
+    var tx = 0,
+      ty = 0,
+      cx = 0,
+      cy = 0;
+    var visible = false;
+
+    // lerp 跟随：注册到共享 ticker
+    tickAdd(function () {
+      cx += (tx - cx) * 0.16;
+      cy += (ty - cy) * 0.16;
+      box.style.transform =
+        'translate3d(' + cx + 'px,' + cy + 'px,0) rotate(3deg)';
+    });
+
+    function findWork(id) {
+      for (var i = 0; i < works.length; i++) {
+        if (works[i] && works[i].id === id) return works[i];
+      }
+      return null;
+    }
+    function show(row) {
+      var w = findWork(row.getAttribute('data-id'));
+      if (w && w.img && img.getAttribute('src') !== w.img) img.src = w.img;
+      if (!visible) {
+        visible = true;
+        box.classList.add('is-on');
+      }
+    }
+    function hide() {
+      if (!visible) return;
+      visible = false;
+      box.classList.remove('is-on');
+    }
+
+    document.addEventListener(
+      'mousemove',
+      function (e) {
+        tx = e.clientX + 24;
+        ty = e.clientY - 40;
+      },
+      { passive: true }
+    );
+
+    // 事件委托：行由 main.js 动态渲染
+    var cur = null;
+    function closestView(t) {
+      return t && t.closest ? t.closest('[data-cursor="view"]') : null;
+    }
+    document.addEventListener('mouseover', function (e) {
+      var row = closestView(e.target);
+      if (row === cur) return;
+      cur = row;
+      if (row) show(row);
+      else hide();
+    });
+    document.addEventListener('mouseout', function (e) {
+      if (!cur) return;
+      var to = e.relatedTarget;
+      if (!to || closestView(to) !== cur) {
+        cur = null;
+        hide();
+      }
+    });
+  };
+
+  /* ============================================================
+   * PF.initRail (M8) —— 边缘导航高亮
+   * IO 监听各板块，当前可见板块的 nav-rail 链接加 .is-active。
+   * 无 IO 时保持普通锚点导航（不加类）。
+   * ============================================================ */
+  PF.initRail = function () {
+    if (once('rail')) return;
+    var rail = byHook('nav-rail');
+    if (!rail) return;
+    var links = Array.prototype.slice.call(
+      rail.querySelectorAll('a[href^="#"]')
+    );
+    if (!links.length) return;
+
+    var secs = [];
+    links.forEach(function (a) {
+      var id = (a.getAttribute('href') || '').slice(1);
+      if (!id) return;
+      var sec = byHook(id) || document.getElementById(id);
+      if (sec) secs.push({ id: id, link: a, el: sec });
+    });
+    if (!secs.length) return;
+
+    function setActive(id) {
+      secs.forEach(function (s) {
+        s.link.classList.toggle('is-active', s.id === id);
+      });
+    }
+    if (!('IntersectionObserver' in window)) return;
+    var io = new IntersectionObserver(
+      function (entries) {
+        entries.forEach(function (en) {
+          if (en.isIntersecting) setActive(en.target.id);
+        });
+      },
+      { rootMargin: '-45% 0px -50% 0px', threshold: 0 }
+    );
+    secs.forEach(function (s) {
+      io.observe(s.el);
+    });
+  };
+
+  /* ============================================================
+   * PF.initReveal (M13) —— 板块入场
+   * IO 给 .reveal 加 .in（.reveal 是唯一的样式类查询例外）；
+   * REDUCED 或无 IO：直接加 .in。
    * ============================================================ */
   PF.initReveal = function () {
-    var els = Array.prototype.slice.call(document.querySelectorAll('.reveal'));
+    if (once('reveal')) return;
+    var els = Array.prototype.slice.call(
+      document.querySelectorAll('.reveal')
+    );
     if (!els.length) return;
 
-    if (!('IntersectionObserver' in window)) {
-      els.forEach(function (el) { el.classList.add('in'); });
+    if (REDUCED || !('IntersectionObserver' in window)) {
+      els.forEach(function (el) {
+        el.classList.add('in');
+      });
       return;
     }
     var io = new IntersectionObserver(
@@ -141,233 +555,46 @@
           }
         });
       },
-      { threshold: 0.15, rootMargin: '0px 0px -6% 0px' }
+      { threshold: 0.12, rootMargin: '0px 0px -8% 0px' }
     );
-    els.forEach(function (el) { io.observe(el); });
+    els.forEach(function (el) {
+      io.observe(el);
+    });
   };
 
   /* ============================================================
-   * PF.initProgress —— 顶部滚动进度条
+   * PF.initProgress (M11) —— 顶部滚动进度条（scroll rAF 节流）
+   * 优先写 .progress-bar 的 transform: scaleX；无该子元素时回退 --p 变量。
+   * 颜色（neon）由 CSS 负责。
    * ============================================================ */
   PF.initProgress = function () {
+    if (once('progress')) return;
     var wrap = byHook('progress');
     if (!wrap) return;
+    var bar = wrap.querySelector('.progress-bar');
 
     var ticking = false;
     function update() {
       ticking = false;
       var h = document.documentElement;
       var max = h.scrollHeight - h.clientHeight;
-      var p = max > 0 ? h.scrollTop / max : 0;
-      // 进度条走 transform: scaleX(var(--p))，transform-only
-      wrap.style.setProperty('--p', clamp(p, 0, 1).toFixed(4));
+      var y = h.scrollTop || window.pageYOffset || 0;
+      var p = max > 0 ? y / max : 0;
+      p = Math.max(0, Math.min(1, p));
+      if (bar) {
+        bar.style.transform = 'scaleX(' + p.toFixed(4) + ')';
+      } else {
+        wrap.style.setProperty('--p', p.toFixed(4));
+      }
     }
     function requestTick() {
       if (!ticking) {
         ticking = true;
-        requestAnimationFrame(update);
+        raf(update);
       }
     }
     window.addEventListener('scroll', requestTick, { passive: true });
     window.addEventListener('resize', requestTick);
     update();
-  };
-
-  /* ============================================================
-   * PF.initTabs —— 作品分类筛选（all / photo / design）+ stagger 重播
-   * 按钮过滤键取 data-tab（兼容 data-filter）
-   * ============================================================ */
-  PF.initTabs = function () {
-    var tabs = allHooks('tab');
-    if (!tabs.length) return;
-
-    tabs.forEach(function (btn) {
-      btn.addEventListener('click', function () {
-        tabs.forEach(function (b) {
-          b.classList.remove('is-active');
-          b.setAttribute('aria-selected', 'false');
-        });
-        btn.classList.add('is-active');
-        btn.setAttribute('aria-selected', 'true');
-        var f =
-          btn.getAttribute('data-tab') ||
-          btn.getAttribute('data-filter') ||
-          'all';
-        if (typeof PF.renderWorks === 'function') PF.renderWorks(f);
-      });
-    });
-  };
-
-  /* ============================================================
-   * PF.initSkills —— 技能条：由 PF.SKILLS 渲染 + 宽度动画
-   * CSS 约定：.skill-fill 用 --w（0~1 小数）+ scaleX 做 transform-only 动画。
-   * HTML 无 skills 容器时，在 [data-js="about"] 末尾自动创建。
-   * 另附带 [data-js="stat-num"] 数字滚动（data-count）。
-   * ============================================================ */
-  PF.initSkills = function () {
-    var skills = PF.SKILLS || [];
-
-    // 1) 渲染技能条
-    var box = byHook('skills');
-    if (!box && skills.length) {
-      var about = byHook('about');
-      if (!about) return;
-      box = document.createElement('div');
-      box.className = 'skills';
-      box.setAttribute('data-js', 'skills');
-      skills.forEach(function (s) {
-        var item = document.createElement('div');
-        item.className = 'skill';
-
-        var head = document.createElement('div');
-        head.className = 'skill-head';
-        var name = document.createElement('span');
-        name.textContent = s.name || '';
-        var pct = document.createElement('span');
-        pct.className = 'pct';
-        pct.textContent = clamp(parseInt(s.level, 10) || 0, 0, 100) + '%';
-        head.appendChild(name);
-        head.appendChild(pct);
-
-        var track = document.createElement('div');
-        track.className = 'skill-track';
-        var fill = document.createElement('div');
-        fill.className = 'skill-fill';
-        fill.setAttribute('data-level', String(clamp(parseInt(s.level, 10) || 0, 0, 100)));
-        // 初始态：scaleX(0)；transform-only 保证动画流畅
-        fill.style.transform = 'scaleX(0)';
-        fill.style.transformOrigin = 'left center';
-        fill.style.transition =
-          'transform 1s cubic-bezier(0.2, 0.7, 0.2, 1)';
-        fill.style.setProperty('--w', '0');
-        track.appendChild(fill);
-
-        item.appendChild(head);
-        item.appendChild(track);
-        box.appendChild(item);
-      });
-      about.appendChild(box);
-    }
-
-    // 2) 进入视口后 stagger 展开
-    var fills = box
-      ? Array.prototype.slice.call(box.querySelectorAll('.skill-fill'))
-      : [];
-    function lightUp() {
-      fills.forEach(function (fill, i) {
-        var lv = clamp(parseInt(fill.getAttribute('data-level'), 10) || 0, 0, 100);
-        window.setTimeout(function () {
-          fill.style.setProperty('--w', String(lv / 100));
-          fill.style.transform = 'scaleX(' + lv / 100 + ')';
-        }, i * 120);
-      });
-    }
-    if (!fills.length) {
-      /* 无技能条：直接进入数字滚动 */
-    } else if ('IntersectionObserver' in window && box) {
-      var io = new IntersectionObserver(function (entries) {
-        entries.forEach(function (en) {
-          if (en.isIntersecting) {
-            lightUp();
-            io.disconnect();
-          }
-        });
-      }, { threshold: 0.3 });
-      io.observe(box);
-    } else {
-      lightUp();
-    }
-
-    // 3) stat-num 数字滚动
-    var nums = allHooks('stat-num');
-    if (!nums.length) return;
-    function countUp(el) {
-      var target = parseInt(el.getAttribute('data-count'), 10);
-      if (isNaN(target)) return;
-      var dur = 1200;
-      var t0 = null;
-      function step(ts) {
-        if (t0 === null) t0 = ts;
-        var p = clamp((ts - t0) / dur, 0, 1);
-        var eased = 1 - Math.pow(1 - p, 3);
-        el.textContent = String(Math.round(target * eased));
-        if (p < 1) requestAnimationFrame(step);
-      }
-      requestAnimationFrame(step);
-    }
-    if ('IntersectionObserver' in window) {
-      var nio = new IntersectionObserver(function (entries) {
-        entries.forEach(function (en) {
-          if (en.isIntersecting) {
-            countUp(en.target);
-            nio.unobserve(en.target);
-          }
-        });
-      }, { threshold: 0.5 });
-      nums.forEach(function (n) { nio.observe(n); });
-    } else {
-      nums.forEach(countUp);
-    }
-  };
-
-  /* ============================================================
-   * PF.initMenu —— 移动端菜单开合
-   * 状态挂在 [data-js="nav"] 元素上的 .is-open（CSS：.nav.is-open .nav-links）
-   * ============================================================ */
-  PF.initMenu = function () {
-    var btn = byHook('menu-btn');
-    var nav = byHook('nav');
-    if (!btn || !nav) return;
-
-    function set(open) {
-      nav.classList.toggle('is-open', open);
-      btn.classList.toggle('is-active', open);
-      btn.setAttribute('aria-expanded', open ? 'true' : 'false');
-      btn.setAttribute('aria-label', open ? '关闭菜单' : '打开菜单');
-    }
-    btn.addEventListener('click', function () {
-      set(!nav.classList.contains('is-open'));
-    });
-    document.addEventListener('keydown', function (e) {
-      if (e.key === 'Escape' && nav.classList.contains('is-open')) set(false);
-    });
-  };
-
-  /* ============================================================
-   * PF.initSmoothScroll —— 锚点平滑滚动，抵消固定导航高度
-   * ============================================================ */
-  PF.initSmoothScroll = function () {
-    document.addEventListener('click', function (e) {
-      var a =
-        e.target && e.target.closest
-          ? e.target.closest('a[href^="#"]')
-          : null;
-      if (!a) return;
-      var hash = a.getAttribute('href');
-      if (!hash || hash === '#') return;
-      var target = document.getElementById(hash.slice(1));
-      if (!target) return;
-
-      e.preventDefault();
-      var nav = byHook('nav');
-      var offset = nav ? nav.offsetHeight : 72;
-      var top =
-        target.getBoundingClientRect().top + window.pageYOffset - offset - 8;
-      window.scrollTo({ top: Math.max(0, top), behavior: 'smooth' });
-
-      // 若移动菜单开着，随手关掉（状态在 nav.is-open 上）
-      var btn = byHook('menu-btn');
-      if (nav && nav.classList.contains('is-open')) {
-        nav.classList.remove('is-open');
-        if (btn) {
-          btn.classList.remove('is-active');
-          btn.setAttribute('aria-expanded', 'false');
-          btn.setAttribute('aria-label', '打开菜单');
-        }
-      }
-      if (window.history && history.replaceState) {
-        history.replaceState(null, '', hash);
-      }
-    });
   };
 })();

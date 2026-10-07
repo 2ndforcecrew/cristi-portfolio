@@ -1,28 +1,31 @@
 #!/usr/bin/env node
 /**
- * cristi-portfolio 冒烟测试（零依赖，只用 Node 内建模块）
+ * cristi-portfolio 冒烟测试（v2.0，零依赖，只用 Node 内建模块）
  *
  * 用法（在项目根目录执行）:
  *   node test/smoke.mjs
  *
  * 断言清单：
- *  1. 关键文件/目录存在：index.html、js/data.js、css/ 下 4 个 .css、assets/img/
- *  2. index.html 含全部 8 个 data-js 钩子
- *     (progress, cursor-dot, cursor-ring, tabs, works-grid, menu-btn, nav, year)
+ *  1. 关键文件存在：index.html、js/data.js、css/ 下恰好 3 个 .css
+ *     （base.css/layout.css/motion.css）；acid.css 与 dist/ 已删除
+ *  2. index.html 含 v2 全部静态 data-js 钩子；decode≥3 处、stat-num 恰好 3 处、
+ *     service-row 恰好 3 处
  *  3. 每个 href="#x" 锚点在页面里都有对应的 id="x"
  *  4. js/data.js：WORKS 恰好 12 条；cat 只含 photo/design；
- *     每条含 id/title/img/palette；img 引用的 12 个 svg 真实存在于 assets/img/
- *  5. css/layout.css 含 1024/768/520 三档 media query；
+ *     每条含 id/title/img/palette；img 引用的 12 个图片文件真实存在于 assets/img/
+ *  5. css/layout.css 含 1024/700/520 三档 media query；
  *     css/motion.css 含 prefers-reduced-motion
  *  6. index.html、css/*、js/* 中无 http(s):// 外部 URL（离线要求）
  *  7. index.html 里出现的每个 class，都至少在一个 CSS 文件的选择器里有定义
- *     （JS 动态生成的 work-card* / skill* 类走白名单：由 JS 渲染、CSS 已有对应定义）
+ *     （JS 动态生成的 work-row* / viewer* / char / float-img 与状态类走白名单）
+ *  8. index.html 里每个 css/*.css 与 js/*.js 引用都带 ?v= 缓存 bust 查询串
+ *  9. data-js="viewer" 的元素必须有 role="dialog"
  *
  * 输出 PASS/FAIL 明细；任一失败则进程 exit code 为 1。
  */
 
 import { readFileSync, existsSync, readdirSync, statSync } from 'node:fs';
-import { join, dirname, relative, sep } from 'node:path';
+import { join, dirname, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
@@ -171,6 +174,11 @@ function findExternalUrls(text) {
   return out;
 }
 
+function countHook(htmlText, h) {
+  const re = new RegExp(`data-js\\s*=\\s*["']${escapeRegExp(h)}["']`, 'g');
+  return (htmlText.match(re) || []).length;
+}
+
 // ---------------------------------------------------------------- 1. 文件存在
 const html = read('index.html');
 const dataJs = read('js/data.js');
@@ -184,10 +192,12 @@ if (isDir('css')) {
     cssFiles = readdirSync(join(ROOT, 'css')).filter((f) => f.endsWith('.css')).sort();
   } catch { /* 保持空数组 */ }
 }
-check('css/ 下有 4 个 .css 文件', cssFiles.length === 4, `实际: ${cssFiles.join(', ') || '(无)'}`);
+check('css/ 下恰好 3 个 .css 文件', cssFiles.length === 3, `实际: ${cssFiles.join(', ') || '(无)'}`);
+check('css/base.css 存在', cssFiles.includes('base.css'));
 check('css/layout.css 存在', cssFiles.includes('layout.css'));
 check('css/motion.css 存在', cssFiles.includes('motion.css'));
-check('css/acid.css 存在', cssFiles.includes('acid.css'));
+check('css/acid.css 已删除', !existsSync(join(ROOT, 'css/acid.css')));
+check('dist/ 已删除', !existsSync(join(ROOT, 'dist')));
 
 let jsFiles = [];
 if (isDir('js')) {
@@ -196,14 +206,24 @@ if (isDir('js')) {
   } catch { /* 保持空数组 */ }
 }
 check('js/data.js 可列出', jsFiles.includes('data.js'));
+check('js/effects.js 可列出', jsFiles.includes('effects.js'));
+check('js/main.js 可列出', jsFiles.includes('main.js'));
 
-// ---------------------------------------------------------------- 2. data-js 钩子
-const HOOKS = ['progress', 'cursor-dot', 'cursor-ring', 'tabs', 'works-grid', 'menu-btn', 'nav', 'year'];
+// ---------------------------------------------------------------- 2. data-js 钩子（v2）
 const htmlText = html ?? '';
-for (const h of HOOKS) {
-  const re = new RegExp(`data-js\\s*=\\s*["']${escapeRegExp(h)}["']`);
-  check(`data-js 钩子 "${h}" 存在`, re.test(htmlText));
+const HOOKS_ONCE = [
+  'progress', 'cursor-dot', 'cursor-ring', 'nav-rail', 'hero-title',
+  'tabs', 'works-list', 'float-img',
+  'viewer', 'viewer-img', 'viewer-close', 'viewer-prev', 'viewer-next',
+  'year', 'contact-mail',
+];
+for (const h of HOOKS_ONCE) {
+  check(`data-js 钩子 "${h}" 存在`, countHook(htmlText, h) >= 1);
 }
+check('data-js="decode" 至少 3 处', countHook(htmlText, 'decode') >= 3, `实际 ${countHook(htmlText, 'decode')} 处`);
+check('data-js="stat-num" 恰好 3 处', countHook(htmlText, 'stat-num') === 3, `实际 ${countHook(htmlText, 'stat-num')} 处`);
+check('data-js="service-row" 恰好 3 处', countHook(htmlText, 'service-row') === 3, `实际 ${countHook(htmlText, 'service-row')} 处`);
+check('data-js="social-link" 至少 1 处', countHook(htmlText, 'social-link') >= 1);
 
 // ---------------------------------------------------------------- 3. 锚点 id 对应
 {
@@ -264,7 +284,7 @@ for (const h of HOOKS) {
   check('每条 WORKS 含 id/title/img/palette', missingKeys.length === 0, missingKeys.slice(0, 5).join('; ') || `已检查 ${list.length} 条`);
   check('cat 只含 photo/design', badCat.length === 0, badCat.slice(0, 5).join('; ') || `已检查 ${list.length} 条`);
   check(
-    'img 引用的 12 个文件真实存在于 assets/img/（svg/jpg/png/webp）',
+    'img 引用的 12 个图片文件真实存在于 assets/img/（jpg/svg）',
     imgProblems.length === 0 && imgSet.size === 12,
     imgProblems.slice(0, 5).join('; ') || `引用 ${imgSet.size} 个不重复文件`,
   );
@@ -274,7 +294,7 @@ for (const h of HOOKS) {
 {
   const layout = read('css/layout.css');
   check('css/layout.css 可读', layout !== null);
-  for (const bp of ['1024', '768', '520']) {
+  for (const bp of ['1024', '700', '520']) {
     check(
       `layout.css 含 ${bp}px 档 media query`,
       layout !== null && new RegExp(`@media[^{]*${bp}\\s*px`, 'i').test(layout),
@@ -317,11 +337,13 @@ for (const h of HOOKS) {
     }
   }
 
-  // JS 动态生成的类（main.js / effects.js 渲染，CSS 已有对应定义）：白名单跳过
-  const JS_GENERATED = /^(work-card|work-card-.+|skill|skill-.+)$/;
+  // JS 动态生成的类（main.js / effects.js 渲染或切换，CSS 已有对应定义）：白名单跳过
+  const JS_GENERATED = /^(work-row|work-row-.+|viewer|viewer-.+|char|float-img)$/;
+  const STATE_CLASSES = /^(is-active|is-open|is-locked|is-glitch|in|has-cursor|is-view|is-link)$/;
 
   const undefinedClasses = [...htmlClasses].filter((c) => {
     if (JS_GENERATED.test(c)) return false;
+    if (STATE_CLASSES.test(c)) return false;
     return !new RegExp(`\\.${escapeRegExp(c)}(?![\\w-])`).test(cssText);
   });
 
@@ -330,7 +352,34 @@ for (const h of HOOKS) {
     undefinedClasses.length === 0,
     undefinedClasses.length
       ? `未定义: ${undefinedClasses.join(', ')}`
-      : `共 ${htmlClasses.size} 个 class（含 JS 动态生成白名单）`,
+      : `共 ${htmlClasses.size} 个 class（含 JS 动态生成/状态类白名单）`,
+  );
+}
+
+// ---------------------------------------------------------------- 8. 缓存 bust（?v=）
+{
+  const refs = [];
+  const re = /(?:href|src)\s*=\s*["']([^"']+)["']/g;
+  let m;
+  while ((m = re.exec(htmlText))) {
+    const v = m[1];
+    if (/^(css|js)\//.test(v)) refs.push(v);
+  }
+  const missing = refs.filter((v) => !/\?v=/.test(v));
+  check(
+    'css/js 引用全部带 ?v= 缓存 bust',
+    refs.length > 0 && missing.length === 0,
+    missing.length ? `缺失: ${missing.join(', ')}` : `共 ${refs.length} 个引用`,
+  );
+}
+
+// ---------------------------------------------------------------- 9. viewer role=dialog
+{
+  const m = htmlText.match(/<[^>]*data-js\s*=\s*["']viewer["'][^>]*>/);
+  check(
+    'data-js="viewer" 的元素有 role="dialog"',
+    m !== null && /role\s*=\s*["']dialog["']/.test(m[0]),
+    m ? m[0].slice(0, 80) + '…' : '未找到 viewer 元素',
   );
 }
 

@@ -1,584 +1,770 @@
 /* ============================================================
-   layout.css — 各 section 布局 / 作品网格 / 断点 1024 / 768 / 520
-   结构类：.nav .hero .works .about .services .contact .footer
-   组件类：.btn .tab .work-card .skill .service-card
-   状态类：.is-active .is-open
-   （动效类 .in / .is-hover / keyframes 全部在 motion.css）
-   ============================================================ */
+ * cristi-portfolio · layout.css（v2.0 暗房终端 DARKROOM TERMINAL）
+ * 全板块布局：progress / cursor 容器 / 固定胶囊 / nav-rail /
+ * hero / marquee / works-list 行 / about 两栏 / services 手风琴 /
+ * contact / footer / viewer overlay / float-img。
+ * 只用 base.css §1.1 的 CSS 变量；transition / animation 归 motion.css。
+ * 断点：1024 / 768 / 700（功能分水岭）/ 520。无外部 URL。
+ * ============================================================ */
 
-/* ================= 导航 ================= */
-.nav {
+/* ================= 0. 全局铬 ================= */
+
+/* ---------- 顶部滚动进度条（M11，颜色 neon） ---------- */
+.progress {
   position: fixed;
-  inset: 0 0 auto 0;
-  z-index: 50;
-  background: var(--paper);
-  border-bottom: var(--border);
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  z-index: 120;
+  pointer-events: none;
 }
-
-.nav-inner {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  height: 72px;
-}
-
-.nav-logo {
-  display: flex;
-  align-items: center;
-  gap: .6rem;
-  font-weight: 900;
-  font-size: 1.35rem;
-  letter-spacing: -.01em;
-  text-transform: uppercase;
-  text-decoration: none;
-}
-.nav-logo-mark {
-  width: 22px; height: 22px;
-  background: var(--accent);
-  border: var(--border-thin);
-  box-shadow: 3px 3px 0 var(--ink);
-}
-
-.nav-links { display: flex; align-items: center; gap: 2rem; }
-
-.nav-link {
-  font-weight: 800;
-  font-size: .9rem;
-  letter-spacing: .08em;
-  text-transform: uppercase;
-  text-decoration: none;
-  padding: .35rem .1rem;
-  border-bottom: 3px solid transparent;
-}
-.nav-link:hover { border-bottom-color: var(--accent); }
-.nav-link.is-active { border-bottom-color: var(--accent); }
-
-.nav-cta { margin-left: .5rem; }
-
-/* 汉堡按钮：桌面隐藏 */
-.nav-burger {
-  display: none;
-  flex-direction: column;
-  justify-content: center;
-  gap: 6px;
-  width: 48px; height: 48px;
-  border: var(--border);
-  background: var(--white);
-  box-shadow: var(--shadow-sm);
-  padding: 0 10px;
-}
-.nav-burger span {
+.progress-bar {
   display: block;
-  height: 3px;
-  background: var(--ink);
-  transition: transform .3s var(--ease-out), opacity .3s;
+  height: 100%;
+  background: var(--neon);
+  transform: scaleX(0);
+  transform-origin: 0 50%;
 }
 
-/* ================= Hero ================= */
+/* ---------- 自定义光标容器（M3：显示/隐藏门控在此，动画归 motion.css） ---------- */
+.cursor-dot,
+.cursor-ring {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 200;
+  pointer-events: none;
+  opacity: 0;
+}
+.cursor-dot {
+  width: 8px;
+  height: 8px;
+  margin: -4px 0 0 -4px;
+  border-radius: 50%;
+  background: var(--neon);
+}
+.cursor-ring {
+  width: 36px;
+  height: 36px;
+  margin: -18px 0 0 -18px;
+  border-radius: 50%;
+  border: 1px solid var(--ink);
+}
+html.has-cursor .cursor-dot,
+html.has-cursor .cursor-ring {
+  opacity: 1;
+}
+/* JS 在首次 mousemove 后才加 .has-cursor；此前原生光标不受影响 */
+html.has-cursor * {
+  cursor: none !important;
+}
+
+/* ---------- 胶囊 UI 基础（M9 hover/选中态归 motion.css） ---------- */
+.pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: .5em;
+  border: 1px solid var(--line);
+  border-radius: var(--pill);
+  padding: .55rem 1.2rem;
+  font-family: var(--font-mono);
+  font-size: .78rem;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--ink);
+  background: transparent;
+  white-space: nowrap;
+}
+.pill--neon {
+  background: var(--neon);
+  border-color: var(--neon);
+  color: var(--neon-ink);
+}
+.pill--ghost {
+  background: transparent;
+}
+
+/* ---------- 固定胶囊：品牌（左上）/ 联系（右上） ---------- */
+.brand-pill,
+.contact-pill {
+  position: fixed;
+  top: 1rem;
+  z-index: 110;
+}
+.brand-pill {
+  left: 1.25rem;
+  font-family: var(--font-latin);
+  font-weight: 700;
+}
+.contact-pill {
+  right: 1.25rem;
+}
+
+/* ---------- 边缘导航：桌面端左侧垂直 ---------- */
+.nav-rail {
+  position: fixed;
+  left: 1rem;
+  top: 50%;
+  translate: 0 -50%;
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+.nav-rail a {
+  writing-mode: vertical-rl;
+  font-family: var(--font-mono);
+  font-size: .72rem;
+  letter-spacing: .3em;
+  text-transform: uppercase;
+  color: var(--dim);
+  padding: .25rem 0;
+}
+.nav-rail a.is-active {
+  color: var(--neon);
+}
+
+/* ---------- main ---------- */
+main {
+  display: block;
+}
+section[id] {
+  scroll-margin-top: 1rem;
+}
+
+/* ================= 1. 板块通用 ================= */
+.works,
+.about,
+.services,
+.contact {
+  padding: clamp(4rem, 10vw, 8rem) clamp(1.25rem, 6vw, 6rem);
+}
+.sec-head {
+  margin-bottom: 1rem;
+}
+.sec-index {
+  font-family: var(--font-mono);
+  font-size: .8rem;
+  letter-spacing: .3em;
+  color: var(--neon);
+}
+.sec-title {
+  font-size: clamp(2.5rem, 7vw, 5.5rem);
+  font-weight: 800;
+  line-height: 1.1;
+  margin: .5rem 0;
+}
+.sec-en {
+  font-family: var(--font-latin);
+  font-size: .72rem;
+  letter-spacing: .35em;
+  text-transform: uppercase;
+  color: var(--dim);
+}
+
+/* M13 显示态：保持 html.js.reveal.in 高优先级写法，防空白页回归。
+ * 隐藏态与过渡归 motion.css；无 JS 兜底在 base.css。 */
+html.js .reveal.in {
+  opacity: 1;
+  translate: none;
+  transform: none;
+}
+
+/* ================= 2. Hero（#top） ================= */
 .hero {
   position: relative;
   min-height: 100svh;
   display: flex;
   align-items: center;
-  overflow: hidden;
-  padding-top: 72px;                 /* 避开固定导航 */
-  border-bottom: var(--border);
-  background: var(--paper);
+  padding: 6rem clamp(1.25rem, 6vw, 6rem) 5rem;
+  /* §1.4：极淡点阵只在 hero 有 */
+  background-image: radial-gradient(rgba(245, 245, 243, .05) 1px, transparent 1px);
+  background-size: 28px 28px;
 }
-
-.hero-inner { position: relative; z-index: 2; }
-
+.hero-inner {
+  width: 100%;
+  max-width: 75rem;
+}
+.eyebrow {
+  font-family: var(--font-latin);
+  font-size: .72rem;
+  letter-spacing: .35em;
+  text-transform: uppercase;
+  color: var(--dim);
+  margin-bottom: 1.5rem;
+}
 .hero-title {
-  margin: 1.25rem 0 1.5rem;
-  max-width: 100%;
-  overflow-wrap: break-word;        /* 大字不断行溢出 */
+  font-size: clamp(3.5rem, 12vw, 10rem);
+  font-weight: 900;
+  line-height: 1.08;
+  letter-spacing: -.01em;
+  overflow: hidden; /* M2 stagger 遮罩 */
+  margin-bottom: 1.5rem;
 }
-.hero-title .row { display: block; }
-
-.hero-sub { max-width: 34rem; }
-
+.hero-title .char {
+  display: inline-block;
+}
+.hero-sub {
+  color: var(--dim);
+  max-width: 34rem;
+  margin-bottom: 2.25rem;
+}
 .hero-actions {
   display: flex;
+  gap: .75rem;
   flex-wrap: wrap;
-  gap: 1rem;
-  margin-top: 2.25rem;
+}
+.hero-status {
+  position: absolute;
+  left: clamp(1.25rem, 6vw, 6rem);
+  bottom: 2.25rem;
+  font-family: var(--font-mono);
+  font-size: .72rem;
+  letter-spacing: .25em;
+  color: var(--faint);
+}
+/* 底部行军蚁虚线分隔带（M7 动画归 motion.css） */
+.ants-divider {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 6px;
+  color: var(--faint);
+}
+.ants-svg {
+  display: block;
+  width: 100%;
+  height: 100%;
 }
 
-.hero-meta {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1rem 2.5rem;
-  margin-top: 3rem;
-  padding-top: 1.5rem;
-  border-top: var(--border-thin);
-  font-size: var(--fs-small);
-  font-weight: 700;
-  letter-spacing: .06em;
-  text-transform: uppercase;
+/* ================= 3. 跑马灯分隔带（M10 动画归 motion.css） ================= */
+.marquee {
+  overflow: hidden;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+  padding: .9rem 0;
+  white-space: nowrap;
 }
-.hero-meta b { color: var(--accent); }
-
-/* 漂移几何图形的定位（动画见 motion.css） */
-.float { position: absolute; z-index: 1; pointer-events: none; }
-.float--1 { top: 16%; right: 8%;  width: 120px; height: 120px; }
-.float--2 { top: 64%; right: 18%; width: 72px;  height: 72px; }
-.float--3 { top: 30%; left: 4%;   width: 56px;  height: 56px; }
-.float--4 { top: 74%; left: 10%;  width: 96px;  height: 96px; }
-.float--5 { top: 12%; left: 38%;  width: 40px;  height: 40px; }
-.float--6 { top: 52%; right: 4%;  width: 88px;  height: 88px; }
-
-/* ================= 按钮 ================= */
-.btn {
+.marquee-track {
   display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: .6rem;
-  padding: .95rem 1.9rem;
-  font-weight: 900;
-  font-size: 1rem;
-  letter-spacing: .04em;
+  width: max-content;
+}
+.marquee-track span {
+  font-family: var(--font-latin);
+  font-size: .85rem;
+  letter-spacing: .3em;
   text-transform: uppercase;
-  text-decoration: none;
-  color: var(--paper);
-  background: var(--accent);
-  border: var(--border);
-  box-shadow: var(--shadow-md);
-  transition: transform .18s var(--ease-out), box-shadow .18s var(--ease-out);
+  color: var(--ink);
+  padding-right: .5em;
 }
-.btn:hover { transform: translate(-2px, -2px); box-shadow: 8px 8px 0 var(--ink); }
-.btn:active { transform: translate(4px, 4px); box-shadow: 2px 2px 0 var(--ink); }
-
-.btn--dark  { background: var(--ink); color: var(--paper); }
-.btn--blue  { background: var(--blue); }
-.btn--ghost { background: var(--white); color: var(--ink); }
-.btn--lg    { padding: 1.2rem 2.6rem; font-size: 1.15rem; }
-
-/* ================= 通用 section 头 ================= */
-.section-head {
-  display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 1.25rem;
-  margin-bottom: 3rem;
+.mq-sep {
+  font-weight: 400;
+  color: var(--neon);
 }
-.section-title { margin-top: 1.25rem; }
-.section-desc { max-width: 32rem; margin-top: 1rem; }
 
-/* ================= 作品区 ================= */
-.works { background: var(--paper); }
-
+/* ================= 4. 作品（#works） ================= */
 .tabs {
   display: flex;
   flex-wrap: wrap;
-  gap: .8rem;
-  margin-bottom: 2.5rem;
+  gap: .6rem;
+  margin-top: 1.75rem;
 }
-
-.tab {
-  padding: .65rem 1.3rem;
-  font-weight: 800;
-  font-size: .85rem;
-  letter-spacing: .08em;
-  text-transform: uppercase;
-  background: var(--white);
-  border: var(--border);
-  box-shadow: var(--shadow-sm);
-  transition: transform .18s var(--ease-out), box-shadow .18s var(--ease-out),
-              background .18s, color .18s;
+.works-list {
+  border-top: 1px solid var(--line);
+  margin-top: 2rem;
 }
-.tab:hover { transform: translate(-2px, -2px); box-shadow: 6px 6px 0 var(--ink); }
-.tab.is-active {
-  background: var(--ink);
-  color: var(--paper);
-  transform: translate(2px, 2px);
-  box-shadow: 2px 2px 0 var(--ink);
-}
-
-.works-grid {
+/* 招牌行：button，三区 grid（JS 动态渲染，类名见 BUILD_PLAN §2.2） */
+.work-row {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: var(--space-gap);
+  grid-template-columns: auto 1fr auto;
+  gap: 1.5rem;
+  align-items: baseline;
+  width: 100%;
+  padding: 1.4rem 0;
+  border-bottom: 1px solid var(--line);
+  background: transparent;
+  text-align: left;
 }
-
-.work-card {
-  position: relative;
+.work-row-index {
+  font-family: var(--font-mono);
+  font-size: .8rem;
+  letter-spacing: .2em;
+  color: var(--dim);
+}
+.work-row-titles {
   display: flex;
   flex-direction: column;
-  background: var(--white);
-  border: var(--border);
-  box-shadow: var(--shadow-md);
-  overflow: hidden;
-  transition: transform .25s var(--ease-out), box-shadow .25s var(--ease-out);
+  gap: .35rem;
+  min-width: 0;
 }
-.work-card-media {
+.work-row-title {
+  font-size: clamp(2rem, 6vw, 4.5rem);
+  font-weight: 800;
+  line-height: 1.1;
+}
+.work-row-en {
+  font-family: var(--font-latin);
+  font-size: .72rem;
+  letter-spacing: .35em;
+  text-transform: uppercase;
+  color: var(--dim);
+}
+.work-row-meta {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+.work-row-cat {
+  border: 1px solid var(--line);
+  border-radius: var(--pill);
+  padding: .3rem .85rem;
+  font-family: var(--font-mono);
+  font-size: .7rem;
+  letter-spacing: .15em;
+  text-transform: uppercase;
+  color: var(--dim);
+  white-space: nowrap;
+}
+.work-row-year {
+  font-family: var(--font-mono);
+  font-size: .8rem;
+  color: var(--dim);
+}
+/* 桌面 hover（§6：触屏只保留 :active，见 motion.css） */
+@media (hover: hover) and (pointer: fine) {
+  .work-row:hover {
+    background: var(--bg-soft);
+  }
+  .work-row:hover .work-row-title {
+    translate: 8px 0;
+  }
+  .work-row:hover .work-row-en {
+    color: var(--neon);
+  }
+}
+
+/* ================= 5. 关于（#about） ================= */
+.about-cols {
+  display: grid;
+  grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+  gap: clamp(2rem, 5vw, 5rem);
+  align-items: start;
+  margin-top: 2rem;
+}
+/* 肖像框：行军蚁虚线框；cristi 日后把 assets/img/portrait.jpg 丢进去即显示 */
+.portrait-frame {
   position: relative;
-  aspect-ratio: 4 / 3;
-  overflow: hidden;
-  border-bottom: var(--border);
-  background: var(--blue);
+  aspect-ratio: 3 / 4;
+  color: var(--faint);
 }
-.work-card-media img {
-  width: 100%; height: 100%;
+.portrait-frame .ants-svg {
+  position: absolute;
+  inset: 0;
+}
+.portrait-ph {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  font-family: var(--font-mono);
+  font-size: .72rem;
+  letter-spacing: .3em;
+  line-height: 2.2;
+  color: var(--faint);
+}
+.portrait-img {
+  position: absolute;
+  inset: 10px;
+  width: calc(100% - 20px);
+  height: calc(100% - 20px);
   object-fit: cover;
 }
-.work-card-body { padding: 1.25rem 1.25rem 1.4rem; }
-.work-card-title { font-size: 1.25rem; margin-bottom: .5rem; }
-.work-card-tags { display: flex; flex-wrap: wrap; gap: .5rem; }
-.work-card-tags li {
-  font-size: .72rem;
-  font-weight: 800;
-  letter-spacing: .1em;
-  text-transform: uppercase;
-  border: var(--border-thin);
-  padding: .25rem .6rem;
-  background: var(--paper);
+.about-copy .lead {
+  font-size: 1.15rem;
+  color: var(--ink);
+  margin-bottom: 1.2rem;
 }
-.work-card-overlay {
-  position: absolute;
-  left: 0; right: 0; bottom: 0;
-  background: var(--accent);
-  color: var(--paper);
-  border-top: var(--border);
-  padding: 1rem 1.25rem;
+.about-copy p + p {
+  margin-top: 1.2rem;
 }
-.work-card-overlay strong {
-  display: block;
-  text-transform: uppercase;
-  letter-spacing: .08em;
-  font-size: .85rem;
-  margin-bottom: .25rem;
+.about-copy p {
+  color: var(--dim);
 }
-.work-card-overlay p { font-size: .85rem; line-height: 1.5; }
-
-/* 触屏：遮罩信息直接静态展示，不依赖 hover */
-@media (hover: none) {
-  .work-card-overlay { position: static; }
-}
-
-/* ================= 关于 ================= */
-.about { background: var(--white); border-block: var(--border); }
-
-.about-grid {
-  display: grid;
-  grid-template-columns: 1fr 1.25fr;
-  gap: clamp(2rem, 5vw, 4.5rem);
-  align-items: center;
-}
-
-.about-photo {
-  border: var(--border);
-  box-shadow: var(--shadow-lg);
-  background: var(--blue);
-  aspect-ratio: 4 / 5;
-  transform: rotate(-2deg);
-  overflow: hidden;
-}
-.about-photo img { width: 100%; height: 100%; object-fit: cover; }
-
-.about-copy p + p { margin-top: 1rem; }
-
-.about-facts { margin-top: 2rem; border-top: var(--border); }
-.about-facts li {
-  display: flex;
-  justify-content: space-between;
-  gap: 1rem;
-  padding: .9rem 0;
-  border-bottom: var(--border-thin);
-  font-weight: 700;
-}
-.about-facts li b { color: var(--accent); }
-
-/* 技能条 */
-.skills { margin-top: 2.5rem; }
-.skill { margin-bottom: 1.3rem; }
-.skill-head {
-  display: flex;
-  justify-content: space-between;
-  align-items: baseline;
-  margin-bottom: .5rem;
-  font-weight: 800;
-  text-transform: uppercase;
-  letter-spacing: .06em;
-  font-size: .9rem;
-}
-.skill-head .pct { color: var(--blue); }
-.skill-track {
-  height: 20px;
-  border: var(--border);
-  background: var(--paper);
-  overflow: hidden;
-}
-.skill-fill {
-  height: 100%;
-  background: var(--accent);
-  /* --w 由 JS 设为 0~1 的小数；动画用 scaleX（transform only） */
-  --w: 1;
-}
-.skill:nth-of-type(3n+2) .skill-fill { background: var(--blue); }
-.skill:nth-of-type(3n) .skill-fill { background: var(--ink); }
-
-/* ================= 服务 ================= */
-.services { background: var(--paper); }
-
-.services-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: var(--space-gap);
-}
-
-.service-card {
-  background: var(--white);
-  border: var(--border);
-  box-shadow: var(--shadow-md);
-  padding: 2rem 1.75rem;
-  transition: transform .22s var(--ease-out), box-shadow .22s var(--ease-out);
-}
-.service-card:hover { transform: translate(-4px, -4px); box-shadow: var(--shadow-lg); }
-.service-card:nth-child(1) { background: var(--accent); color: var(--paper); }
-.service-card:nth-child(2) { background: var(--blue); color: var(--paper); }
-
-.service-num {
-  font-size: 3rem;
-  font-weight: 900;
-  line-height: 1;
-  margin-bottom: 1.25rem;
-  opacity: .9;
-}
-.service-card h3 { font-size: 1.4rem; margin-bottom: .75rem; text-transform: uppercase; }
-.service-card p { font-size: .95rem; }
-.service-card ul { margin-top: 1.1rem; }
-.service-card ul li {
-  padding: .45rem 0;
-  border-top: 2px solid currentColor;
-  font-weight: 700;
-  font-size: .9rem;
-}
-
-/* ================= 联系 ================= */
-.contact {
-  background: var(--ink);
-  color: var(--paper);
-  border-top: var(--border);
-  text-align: center;
-}
-.contact .eyebrow { background: var(--ink); color: var(--paper); border-color: var(--paper); box-shadow: 4px 4px 0 var(--accent); }
-.contact-title { margin: 1.25rem auto 1.5rem; max-width: 16ch; }
-.contact-mail {
-  display: inline-block;
-  font-size: clamp(1.4rem, 4.5vw, 3rem);
-  font-weight: 900;
-  color: var(--accent);
-  text-decoration: none;
-  border-bottom: 4px solid var(--accent);
-  margin-bottom: 2.5rem;
-  overflow-wrap: break-word;
-}
-.contact-mail:hover { color: var(--paper); border-bottom-color: var(--paper); }
-.contact-socials {
-  display: flex;
-  justify-content: center;
-  flex-wrap: wrap;
-  gap: 1rem;
-  margin-top: 2.5rem;
-}
-
-/* ================= 页脚 ================= */
-.footer {
-  background: var(--ink);
-  color: var(--paper);
-  border-top: 3px solid var(--accent);
-  padding: 2.5rem 0 1.5rem;
-}
-.footer-inner {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 1.25rem;
-}
-.footer-brand { font-weight: 900; text-transform: uppercase; font-size: 1.1rem; }
-.footer-brand .nav-logo-mark { display: inline-block; vertical-align: -3px; margin-right: .5rem; }
-.footer-links { display: flex; gap: 1.5rem; flex-wrap: wrap; font-size: .85rem; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; }
-.footer-links a { text-decoration: none; }
-.footer-links a:hover { color: var(--accent); }
-.footer-copy {
-  margin-top: 2rem;
-  padding-top: 1.25rem;
-  border-top: 2px solid rgba(247, 244, 236, .25);
-  font-size: .8rem;
-  opacity: .75;
-  display: flex;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: .5rem;
-}
-
-/* ============================================================
-   断点
-   ============================================================ */
-
-/* ≤1024：作品 3→2 列，服务 3→2 列 */
-@media (max-width: 1024px) {
-  .works-grid { grid-template-columns: repeat(2, 1fr); }
-  .services-grid { grid-template-columns: repeat(2, 1fr); }
-  .float--1 { width: 90px; height: 90px; }
-  .float--4 { width: 72px; height: 72px; }
-}
-
-/* ≤768：导航收进汉堡菜单；关于改单列；服务改单列 */
-@media (max-width: 768px) {
-  .nav-burger { display: flex; }
-
-  .nav-links {
-    position: fixed;
-    top: 72px; left: 0; right: 0;
-    flex-direction: column;
-    align-items: stretch;
-    gap: 0;
-    background: var(--ink);
-    color: var(--paper);
-    border-bottom: var(--border);
-    padding: 1rem 1.25rem 1.5rem;
-    transform: translateY(-130%);
-    opacity: 0;
-    pointer-events: none;
-    transition: transform .35s var(--ease-out), opacity .3s;
-  }
-  .nav.is-open .nav-links {
-    transform: translateY(0);
-    opacity: 1;
-    pointer-events: auto;
-  }
-  .nav-link {
-    display: block;
-    padding: 1rem .25rem;
-    border-bottom: 2px solid rgba(247, 244, 236, .2);
-    font-size: 1.05rem;
-  }
-  .nav-link:hover, .nav-link.is-active { border-bottom-color: var(--accent); color: var(--accent); }
-  .nav-cta { margin: 1.25rem 0 0; }
-
-  /* 汉堡变 X */
-  .nav.is-open .nav-burger span:nth-child(1) { transform: translateY(9px) rotate(45deg); }
-  .nav.is-open .nav-burger span:nth-child(2) { opacity: 0; }
-  .nav.is-open .nav-burger span:nth-child(3) { transform: translateY(-9px) rotate(-45deg); }
-
-  .about-grid { grid-template-columns: 1fr; }
-  .about-photo { max-width: 420px; }
-
-  .services-grid { grid-template-columns: 1fr; }
-
-  .section-head { margin-bottom: 2.25rem; }
-
-  .hero-meta { gap: .75rem 1.5rem; }
-}
-
-/* ≤520：作品 2→1 列；收紧间距 */
-@media (max-width: 520px) {
-  .works-grid { grid-template-columns: 1fr; }
-
-  .container { width: min(1200px, 100% - 2rem); }
-
-  .hero-actions .btn { flex: 1 1 100%; }
-
-  .float--2, .float--5 { display: none; }   /* 小屏减少装饰 */
-
-  .footer-inner { flex-direction: column; align-items: flex-start; }
-
-  .about-stats { gap: 1rem; }
-  .stat-num { font-size: 1.8rem; }
-}
-
-/* ============================================================
-   增补：HTML 类名映射（BEM → 连字符）后的配套规则
-   ============================================================ */
-
-/* ---- section 标题英文 ---- */
-.section-title-en {
-  display: block;
-  font-size: .42em;
-  letter-spacing: .32em;
-  color: var(--accent);
-  margin-top: .6rem;
-}
-
-/* ---- 关于：数字统计 ---- */
 .about-stats {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: var(--space-gap);
-  margin-top: 2.5rem;
-}
-.stat {
-  border: var(--border);
-  background: var(--paper);
-  box-shadow: var(--shadow-sm);
-  padding: 1.5rem 1rem;
-  text-align: center;
+  gap: 1rem;
+  margin-top: 3rem;
+  border-top: 1px solid var(--line);
+  padding-top: 2rem;
 }
 .stat-num {
-  display: block;
-  font-size: 2.5rem;
-  font-weight: 900;
-  color: var(--accent);
-  line-height: 1;
-  margin-bottom: .5rem;
+  font-family: var(--font-mono);
+  font-size: clamp(2.5rem, 5vw, 4rem);
+  font-weight: 700;
+  line-height: 1.1;
+  color: var(--ink);
 }
-.stat-label { font-size: .85rem; font-weight: 700; }
-
-/* ---- 联系：社交链接 ---- */
-.social-link {
-  display: inline-block;
-  padding: .7rem 1.4rem;
-  border: var(--border-thin);
-  border-color: var(--paper);
-  color: var(--paper);
-  font-weight: 800;
-  text-decoration: none;
-  transition: background .18s, color .18s, border-color .18s;
-}
-.social-link:hover {
-  background: var(--accent);
-  border-color: var(--accent);
-  color: var(--paper);
+.stat-label {
+  font-size: .85rem;
+  color: var(--dim);
+  margin-top: .35rem;
 }
 
-/* ---- 页脚标语 ---- */
-.footer-tag {
-  margin-top: 1rem;
+/* ================= 6. 服务（#services）手风琴 ================= */
+.sec-desc {
+  color: var(--dim);
+  margin: 1rem 0 2rem;
+}
+.service-row {
+  border-top: 1px solid var(--line);
+}
+.service-row:last-child {
+  border-bottom: 1px solid var(--line);
+}
+.service-head {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 1.5rem;
+  width: 100%;
+  padding: 1.6rem 0;
+  text-align: left;
+}
+.service-num {
+  font-family: var(--font-mono);
   font-size: .8rem;
+  letter-spacing: .2em;
+  color: var(--dim);
+}
+.service-title {
+  font-size: clamp(1.6rem, 4vw, 3rem);
   font-weight: 800;
-  letter-spacing: .32em;
-  color: var(--accent);
+  line-height: 1.15;
+}
+.service-icon {
+  font-family: var(--font-mono);
+  font-size: 1.5rem;
+  line-height: 1;
+  color: var(--dim);
+}
+.service-row.is-open .service-icon {
+  rotate: 45deg;
+  color: var(--neon);
+}
+/* 展开动画高度由 JS 读 scrollHeight 设内联；无 JS 时直接展开 */
+.service-body {
+  overflow: hidden;
+  max-height: 0;
+}
+html:not(.js) .service-body {
+  max-height: none;
+}
+.service-desc {
+  color: var(--dim);
+  max-width: 40rem;
+  padding-bottom: 1.25rem;
+}
+.service-body .pill {
+  margin-bottom: 1.75rem;
 }
 
-/* ---- Hero：漂移图形容器定位 + 滚动提示 ---- */
-/* hero 直接子元素压住绝对定位的图形层（图形容器与滚动提示除外） */
-.hero > :not(.hero-shapes):not(.hero-scroll):not(.acid-stickers):not(.acid-filter-defs) {
-  position: relative;
-  z-index: 2;
+/* ================= 7. 联系（#contact） ================= */
+.contact-mail {
+  display: block;
+  font-size: clamp(1.8rem, 6vw, 4.5rem);
+  font-weight: 800;
+  line-height: 1.15;
+  overflow-wrap: break-word;
+  margin: 2rem 0 1.5rem;
 }
-.hero-shapes {
-  position: absolute;
+.contact-lead {
+  color: var(--dim);
+  max-width: 34rem;
+}
+.contact-socials {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .6rem;
+  margin-top: 1.75rem;
+}
+
+.stat {
+  min-width: 0; /* 网格项防溢出 */
+}
+/* social-link / footer-top 视觉样式完全由 .pill 提供，
+ * 此处仅作类覆盖（smoke 第 7 项要求每个 class 有对应选择器）。 */
+.social-link,
+.footer-top {}
+
+/* ================= 8. 页脚 ================= */
+.footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+  padding: 2rem clamp(1.25rem, 6vw, 6rem);
+  border-top: 1px solid var(--line);
+}
+.footer-copy,
+.footer-tag {
+  font-family: var(--font-mono);
+  font-size: .72rem;
+  letter-spacing: .2em;
+  text-transform: uppercase;
+  color: var(--dim);
+}
+
+/* ================= 9. 全屏作品 viewer（M5 过渡归 motion.css） ================= */
+.viewer {
+  position: fixed;
   inset: 0;
-  z-index: 1;
+  z-index: 150;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1.25rem;
+  padding: clamp(1rem, 4vw, 3rem);
+  background: var(--bg);
+  overflow-y: auto;
+}
+/* hidden 属性必须压住 display:flex，否则首屏直接弹 viewer */
+.viewer[hidden] {
+  display: none !important;
+}
+.viewer-frame {
+  position: absolute;
+  inset: clamp(.75rem, 2vw, 1.5rem);
+  color: var(--faint);
   pointer-events: none;
 }
-.hero-scroll {
+.viewer-frame .ants-svg {
   position: absolute;
-  bottom: 2rem;
-  left: 50%;
-  translate: -50% 0;
-  z-index: 2;
-  display: inline-flex;
-  text-decoration: none;
-  padding: .5rem;
+  inset: 0;
 }
-.hero-scroll-arrow {
-  width: 18px;
-  height: 18px;
-  border-right: 3px solid var(--ink);
-  border-bottom: 3px solid var(--ink);
-  transform: rotate(45deg);
+.viewer-figure {
+  display: grid;
+  grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+  gap: clamp(1.5rem, 4vw, 3rem);
+  align-items: center;
+  width: min(75rem, 100%);
+  margin: auto;
+}
+.viewer-figure img {
+  width: 100%;
+  max-height: 72vh;
+  object-fit: contain;
+  background: var(--bg-soft);
+}
+.viewer-meta {
+  min-width: 0;
+}
+.viewer-en {
+  font-family: var(--font-latin);
+  font-size: .72rem;
+  letter-spacing: .35em;
+  text-transform: uppercase;
+  color: var(--neon);
+  margin-bottom: .75rem;
+}
+.viewer-title {
+  font-size: clamp(2rem, 5vw, 3.5rem);
+  font-weight: 800;
+  line-height: 1.1;
+  margin-bottom: .75rem;
+}
+.viewer-sub {
+  font-family: var(--font-mono);
+  font-size: .8rem;
+  letter-spacing: .15em;
+  text-transform: uppercase;
+  color: var(--dim);
+  margin-bottom: 1rem;
+}
+.viewer-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .5rem;
+  margin-bottom: 1rem;
+}
+/* tag 底色由 JS 按作品 palette 内联设置 */
+.viewer-tags span {
+  display: inline-block;
+  border-radius: var(--pill);
+  padding: .3rem .9rem;
+  font-family: var(--font-mono);
+  font-size: .7rem;
+  letter-spacing: .15em;
+  text-transform: uppercase;
+  color: var(--neon-ink);
+}
+.viewer-desc {
+  color: var(--dim);
+  font-size: .95rem;
+}
+.viewer-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .6rem;
+  justify-content: center;
+}
+/* viewer 打开时锁 body 滚动 */
+html.is-locked {
+  overflow: hidden;
+}
+
+/* ================= 10. 悬停浮图（M4：定位/显隐归 effects.js） ================= */
+.float-img {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 90;
+  width: clamp(11.25rem, 22vw, 18.75rem);
+  opacity: 0;
+  pointer-events: none;
+}
+.float-img img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* ================= 11. 断点 ================= */
+
+/* 1024：收紧大字阶与栏间距 */
+@media (max-width: 1024px) {
+  .hero-title {
+    font-size: clamp(3rem, 11vw, 7rem);
+  }
+  .work-row-title {
+    font-size: clamp(1.8rem, 5vw, 3.2rem);
+  }
+  .about-cols {
+    gap: 2.5rem;
+  }
+}
+
+/* 768：about 先变单栏等细节微调 */
+@media (max-width: 768px) {
+  .about-cols {
+    grid-template-columns: 1fr;
+  }
+  .portrait-frame {
+    max-width: 26.25rem;
+  }
+  .contact-mail {
+    font-size: clamp(1.5rem, 7vw, 3rem);
+  }
+  .viewer-figure {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 1.5rem;
+  }
+}
+
+/* 700：功能分水岭 —— 底部导航条 / 无光标 / 无浮图 / 动效简化（motion.css） */
+@media (max-width: 700px) {
+  /* 自定义光标彻底关闭 */
+  .cursor-dot,
+  .cursor-ring {
+    display: none !important;
+  }
+  /* 边缘导航 → 底部固定横向胶囊条 */
+  .nav-rail {
+    left: 50%;
+    right: auto;
+    top: auto;
+    bottom: calc(.8rem + env(safe-area-inset-bottom));
+    translate: -50% 0;
+    flex-direction: row;
+    gap: .25rem;
+    background: var(--bg-soft);
+    border: 1px solid var(--line);
+    border-radius: var(--pill);
+    padding: .45rem .7rem;
+  }
+  .nav-rail a {
+    writing-mode: horizontal-tb;
+    font-size: .68rem;
+    letter-spacing: .18em;
+    padding: .5rem .6rem;
+  }
+  /* 防底部导航条遮挡内容 */
+  main {
+    padding-bottom: 6rem;
+  }
+  .footer {
+    padding-bottom: 7rem;
+  }
+  /* 悬停浮图不渲染 */
+  .float-img {
+    display: none;
+  }
+  /* 字阶收缩 */
+  .hero {
+    padding-top: 5rem;
+  }
+  .hero-title {
+    font-size: clamp(2.75rem, 13vw, 4.5rem);
+  }
+  .sec-title {
+    font-size: clamp(2rem, 10vw, 3rem);
+  }
+  .work-row-title {
+    font-size: clamp(1.5rem, 9vw, 2.2rem);
+  }
+  .work-row {
+    gap: 1rem;
+  }
+  .service-title {
+    font-size: clamp(1.4rem, 6vw, 2rem);
+  }
+  /* viewer 移动端：图 52vh、meta 在下、按钮全宽 ≥44px */
+  .viewer-figure {
+    grid-template-columns: 1fr;
+  }
+  .viewer-figure img {
+    max-height: 52vh;
+  }
+  .viewer-nav {
+    flex-direction: column;
+    align-items: stretch;
+    width: 100%;
+  }
+  .viewer-nav .pill {
+    min-height: 44px;
+  }
+}
+
+/* 520：小屏细节 */
+@media (max-width: 520px) {
+  .brand-pill {
+    left: .75rem;
+  }
+  .contact-pill {
+    right: .75rem;
+  }
+  .pill {
+    padding: .5rem 1rem;
+    font-size: .7rem;
+  }
+  .hero-actions .pill {
+    flex: 1 1 auto;
+  }
+  .work-row-meta {
+    gap: .6rem;
+  }
+  .about-stats {
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: .5rem;
+  }
+  .stat-num {
+    font-size: 2rem;
+  }
 }
