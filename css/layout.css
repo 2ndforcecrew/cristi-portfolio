@@ -555,7 +555,7 @@
 
 /* ---- Hero：漂移图形容器定位 + 滚动提示 ---- */
 /* hero 直接子元素压住绝对定位的图形层（图形容器与滚动提示除外） */
-.hero > :not(.hero-shapes):not(.hero-scroll) {
+.hero > :not(.hero-shapes):not(.hero-scroll):not(.acid-stickers):not(.acid-filter-defs) {
   position: relative;
   z-index: 2;
 }
