@@ -15,6 +15,7 @@
   <link rel="stylesheet" href="css/base.css">
   <link rel="stylesheet" href="css/layout.css">
   <link rel="stylesheet" href="css/motion.css">
+  <link rel="stylesheet" href="css/acid.css">
 </head>
 <body>
 
@@ -48,7 +49,27 @@
   <main>
 
     <!-- Hero -->
-    <section id="top" class="hero reveal" data-js="hero">
+    <section id="top" class="hero hero--acid reveal" data-js="hero">
+      <svg class="acid-filter-defs" aria-hidden="true" focusable="false">
+        <defs>
+          <filter id="acid-spray" x="-20%" y="-20%" width="140%" height="140%">
+            <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" seed="7" result="noise"/>
+            <feDisplacementMap in="SourceGraphic" in2="noise" scale="7" xChannelSelector="R" yChannelSelector="G"/>
+          </filter>
+        </defs>
+      </svg>
+      <div class="acid-stickers" aria-hidden="true">
+        <span class="sticker sticker--1"></span>
+        <span class="sticker sticker--2"></span>
+        <span class="sticker sticker--3"></span>
+        <span class="sticker sticker--4"></span>
+        <span class="sticker sticker--5"></span>
+        <span class="sticker sticker--6"></span>
+        <span class="sticker sticker--7"></span>
+        <span class="sticker sticker--8"></span>
+        <span class="sticker sticker--9"></span>
+        <span class="sticker sticker--10"></span>
+      </div>
       <div class="hero-shapes" data-js="hero-shapes" aria-hidden="true">
         <span class="float float--1" style="--d:0s"></span>
         <span class="float float--3" style="--d:-6s"></span>

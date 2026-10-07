@@ -6,7 +6,7 @@
  *   node test/smoke.mjs
  *
  * 断言清单：
- *  1. 关键文件/目录存在：index.html、js/data.js、css/ 下 3 个 .css、assets/img/
+ *  1. 关键文件/目录存在：index.html、js/data.js、css/ 下 4 个 .css、assets/img/
  *  2. index.html 含全部 8 个 data-js 钩子
  *     (progress, cursor-dot, cursor-ring, tabs, works-grid, menu-btn, nav, year)
  *  3. 每个 href="#x" 锚点在页面里都有对应的 id="x"
@@ -184,9 +184,10 @@ if (isDir('css')) {
     cssFiles = readdirSync(join(ROOT, 'css')).filter((f) => f.endsWith('.css')).sort();
   } catch { /* 保持空数组 */ }
 }
-check('css/ 下有 3 个 .css 文件', cssFiles.length === 3, `实际: ${cssFiles.join(', ') || '(无)'}`);
+check('css/ 下有 4 个 .css 文件', cssFiles.length === 4, `实际: ${cssFiles.join(', ') || '(无)'}`);
 check('css/layout.css 存在', cssFiles.includes('layout.css'));
 check('css/motion.css 存在', cssFiles.includes('motion.css'));
+check('css/acid.css 存在', cssFiles.includes('acid.css'));
 
 let jsFiles = [];
 if (isDir('js')) {
